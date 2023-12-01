@@ -59,11 +59,7 @@ There are several sample ena dataset available inside the `sample_data` folder. 
 5.  The data file *`enaset.Rdata`* is located in the *`data`* folder.\
     <img src="images/Step_5.JPG" alt="Comparison tab" class="jop-noMdConv" width="250px"/>
 
-<p align="right">
-
-(<a href="#readme-top">back to top</a>)
-
-</p>
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 ### Visualize your data
 
@@ -77,11 +73,8 @@ In the **`Change`** tab, you can visualize the change of the network over the un
 
 In the **`Plot Setting`** tab, you can change the axes and scaling. <img src="images/plot_settings.JPG" alt="Plot Setting" class="jop-noMdConv" width="500px"/>
 
-<p align="right">
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
 
-(<a href="#readme-top">back to top</a>)
-
-</p>
 
 ## Roadmap
 
@@ -94,11 +87,8 @@ In the **`Plot Setting`** tab, you can change the axes and scaling. <img src="im
 -   [ ] Show the raw data in data table
 -   [ ] Fix camera position when changing groups
 
-<p align="right">
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
 
-(<a href="#readme-top">back to top</a>)
-
-</p>
 
 ## Contributing
 
@@ -112,18 +102,11 @@ If you have a suggestion that would make this better, please fork the repo and c
 4.  Push to the Branch (`git push origin feature/AmazingFeature`)
 5.  Open a Pull Request
 
-<p align="right">
-
-(<a href="#readme-top">back to top</a>)
-
-</p>
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 ## License
 
 Distributed under the MIT License. See `LICENSE` for more information.
 
-<p align="right">
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
 
-(<a href="#readme-top">back to top</a>)
-
-</p>
