@@ -8,7 +8,6 @@ source('app_ui_model_tab.R')
 source('app_ui_data_upload_tab.R')
 library(shinyWidgets)
 source('app_server.R')
-library(profvis)
 library(shinyjs)
 library(R6)
 
@@ -70,6 +69,8 @@ app_server <- function(input, output, session) {
   ena_server_state$active_tab <- reactive({
     input$'main_app-mytabs'
   })
+  
+  # The server needs to know which tab is currently active in order to show the corresponding data
   ena_server_state$render_comparison <- reactive({
     ena_server_state$active_tab() == 'comparison_plot'
   })
@@ -83,4 +84,3 @@ app_server <- function(input, output, session) {
 }
 
 shinyApp(app_ui, app_server)
-# p<-profvis({runApp(shinyApp(app_ui, app_server))});htmlwidgets::saveWidget(p, "profile4.html")
