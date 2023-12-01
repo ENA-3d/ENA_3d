@@ -1,7 +1,7 @@
 ### About The Project
 The project Epistemic Network Analysis 3d (ENA_3d) visualizes the ENA object in 3d space.
 ### Built with
-* [![Shiny][Next.js]][shiny-url]
+* [![Shiny][Shiny]][shiny-url]
 ## Getting Started
 
 This is an example of how you may  set up your project locally.
@@ -45,8 +45,12 @@ There are several sample ena dataset available inside the `sample_data` folder. 
 
 In the **`Comparison`** tab, you can compare networks from different groups.
 <img src="images/compare.JPG" alt="Comparison tab" width="500px" class="jop-noMdConv">
+
+
 In the **`Change`** tab, you can visualize the change of the network over the unit you selected.
 <img src="images/change.JPG" alt="Change tab" width="500px" class="jop-noMdConv">
+
+
 In the **`Plot Setting`** tab, you can change the axes and scaling.
 <img src="images/plot_settings.JPG" alt="Plot Setting" width="500px" class="jop-noMdConv">
 
@@ -79,3 +83,4 @@ Don't forget to give the project a star! Thanks again!
 Distributed under the MIT License. See LICENSE.txt for more information.
 
 [shiny-url]: https://shiny.posit.co/
+[Shiny]: https://img.shields.io/badge/Shiny-shinyapps.io-blue?style=flat&labelColor=white&logo=RStudio&logoColor=blue)](https://matt.dray.shinyapps.io/randoflag/
