@@ -2,7 +2,9 @@
 
 The project Epistemic Network Analysis 3d (ENA_3d) visualizes the ENA object in 3d space.
 
-### Built with [![](https://img.shields.io/badge/Shiny-shinyapps.io-blue?style=flat&labelColor=white&logo=RStudio&logoColor=blue)](https://shiny.posit.co/)
+### Built with
+
+[![](https://img.shields.io/badge/Shiny-shinyapps.io-blue?style=flat&labelColor=white&logo=RStudio&logoColor=blue)](https://shiny.posit.co/)
 
 ## Getting Started
 
