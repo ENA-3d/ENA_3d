@@ -30,11 +30,8 @@ This is an example of how you may set up your project locally. To get a local co
 
 3.  Open *`app.R`* in the `R` folder and run the script. It should open the app as shown below. <img src="images/main_app.JPG" alt="Main app" class="jop-noMdConv" width="500px"/>
 
-<p align="right">
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
 
-(<a href="#readme-top">back to top</a>)
-
-</p>
 
 ### Prepare the data
 
