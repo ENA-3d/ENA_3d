@@ -48,7 +48,7 @@ There are several sample ena dataset available inside the `sample_data` folder. 
     <img src="images/Step_2.JPG" alt="Comparison tab" class="jop-noMdConv" width="500px"/>
 
 3.  Go back to "Set" and download the data.\
-    <img src="images/Step_3.JPG" alt="Comparison tab" class="jop-noMdConv" width="500px"/>
+    <img src="images/Step_3.jpg" alt="Comparison tab" class="jop-noMdConv" width="500px"/>
 
 4.  Unzip the downloaded file.\
     <img src="images/Step_4.JPG" alt="Comparison tab" class="jop-noMdConv" width="250px"/>
