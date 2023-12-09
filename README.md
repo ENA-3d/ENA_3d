@@ -5,6 +5,7 @@
 ### About The Project
 
 The project Epistemic Network Analysis 3d (ENA_3d) visualizes the ENA object in 3d space.
+<img src="images/network_preview.jpg" alt="Comparison tab" class="jop-noMdConv" width="500px"/>
 
 ### Built with
 
