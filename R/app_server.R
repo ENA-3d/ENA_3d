@@ -1,7 +1,13 @@
+"
+This module is the main app. It handles the loading of the ENA data, and prepares data of nodes and points for rendering.
+The logic for rendering the plots is handled in the sub-modules.
+"
 source('build_network.R')
 source('transition.R')
 source('app_utils.R')
 source('app_module_ena_comparison_plot.R')
+source('app_module_ena_unit_group_change_plot.R')
+
 library(shinyWidgets)
 
 ena_app_server <- function(id,state) {
@@ -139,28 +145,12 @@ ena_app_server <- function(id,state) {
       "
         The plot in the model->change tab
       "
-      output$ena_unit_group_change_plot <- renderPlotly({
-        req(initialized(),cancelOutput = TRUE)
-        validate(
-          need(input$x != '',FALSE),
-          need(input$y != '',FALSE),
-          need(input$z != '',FALSE),
-          need(input$group_change_var != '','No group change var'),
-        )
-
-        # We first make all the plots among groups and cache the result
-        # in order to increase performance
-        if(length(rv$unit_group_change_plots) == 0){
-          print('length 0')
-          rv$unit_group_change_plots=make_unit_group_change_plots()
-          rv$unit_group_change_plots[[as.character(input$unit_change)]]
-        }else{
-          print('not length 0')
-          rv$unit_group_change_plots[[as.character(input$unit_change)]]
-        }
-
-
-      })
+      ena_unit_group_change_plot_output(input,output,session,
+                                        rv,
+                                        state,
+                                        scaled_points(),
+                                        scaled_nodes()
+                                        )
 
       # Hide or show the corresponding plot, depending on which tab is active
       observeEvent(state$active_tab(),{
@@ -232,12 +222,12 @@ ena_app_server <- function(id,state) {
         rv$initialized<- TRUE
       })
 
-      execute_at_next_input <- function(expr, session = getDefaultReactiveDomain()) {
-        observeEvent(once = TRUE, reactiveValuesToList(session$input), {
-          print(reactiveValuesToList(session$input))
-          force(expr)
-        }, ignoreInit = TRUE)
-      }
+      # execute_at_next_input <- function(expr, session = getDefaultReactiveDomain()) {
+      #   observeEvent(once = TRUE, reactiveValuesToList(session$input), {
+      #     print(reactiveValuesToList(session$input))
+      #     force(expr)
+      #   }, ignoreInit = TRUE)
+      # }
       
       # create checkbox for select group in the model->comparison tab
       output$group_colors_container <- renderUI({
@@ -247,102 +237,6 @@ ena_app_server <- function(id,state) {
                            choiceValues = rv$ena_groups,
                            selected=rv$ena_groups
         )
-      })
-
-      "
-      When the user change the axies or line width or scale factor,
-      redraw the unit group change plot
-      "
-      observeEvent({input$x
-                    input$y
-                    input$z
-                    input$line_width
-                    input$scale_factor},
-
-        {
-        if(initialized() && length(rv$unit_group_change_plots)>0){
-          rv$unit_group_change_plots <- make_unit_group_change_plots()
-        }
-      })
-
-      # make plots for all the groups and save it inside a list
-      make_unit_group_change_plots <- reactive({
-        print('make_unit_group_plots')
-        withProgress(message = 'Making plot', value = 0, {
-          # Number of times we'll go through the loop
-          # tm[input$group_change,]
-          # axx <- list(
-          #   nticks = 4,
-          #   range = c(-3,3)
-          # )
-          # axy <- list(
-          #   nticks = 4,
-          #   range = c(-3,3)
-          # )
-          # axz <- list(
-          #   nticks = 4,
-          #   range = c(-3,3)
-          # )
-          camera = list(
-            eye=list(x=1.5, y=1.5, z=1.5)
-          )
-          n=length(rv$ena_groups)
-          my_nodes <- scaled_nodes()
-
-          t <- list(
-            family = "sans serif",
-            size = 14,
-            color = toRGB("grey50"))
-
-
-
-          for (i in 1:n) {
-            current_group = rv$ena_groups[i]
-            print(paste0('current group:',current_group))
-
-            mplot <- plot_ly()
-
-            mplot <- add_trace(mplot, data = my_nodes, x = x_axis(), y = y_axis(), z = z_axis(),
-                               type = 'scatter3d', mode = "markers", name = "Codes",
-                               marker = list(
-                                 size = abs(my_nodes$weight),
-                                 line = list(
-                                   width = 0
-                                 )
-                                 #,name = labels[i] #rownames(nodes)[i]
-                               ))
-            mplot <-  add_text(mplot,data=my_nodes,x = x_axis(), y = y_axis(), z = z_axis(),
-                               text = ~code,
-                               textfont=t,
-                               textposition = "top right")
-
-            c_network <- build_network(scaled_nodes(),
-                                       network=get_mean_group_lineweights(rv$ena_obj,rv$ena_groupVar[1],current_group),
-                                       adjacency.key=rv$ena_obj$rotation$adjacency.key)
-            # print('start plotting network')
-            mplot <- plot_network(mplot,
-                                  c_network,
-                                  legend.include.edges = FALSE,
-                                  x_axis=input$x,
-                                  y_axis=input$y,
-                                  z_axis=input$z,
-                                  line_width = input$line_width)
-
-            mtitle = list(
-              text=paste0(rv$ena_groupVar[1],' ',current_group),
-              pad = list(t=50,b = 10, l = 10, r = 10)
-            )
-
-            mplot <- mplot %>% layout(title = mtitle,
-                                      scene = list(camera=camera)
-                                      )
-            mplot  %>% toWebGL()
-            rv$unit_group_change_plots[[as.character(current_group)]] <- mplot
-            incProgress(1/n, detail = paste("Doing part: ", i))
-
-          }
-        })
-        rv$unit_group_change_plots
       })
     }
   )

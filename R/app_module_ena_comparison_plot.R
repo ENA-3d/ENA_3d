@@ -61,17 +61,17 @@ ena_comparison_plot_output <-  function(input, output, session,
                               y = y_axis(),
                               z = z_axis(),
                               color = tilde_group_var_or_null(),
-                              colors = c('#BF382A', '#0C4B8E'),
+                              colors = c('#BF382A', '#0C4B8E','#0c4111'),
                               type = 'scatter3d',
                               mode = "markers",
                               # name = "Points",
-                              hovertemplate = "X: %{x}<br>Y: %{y}<br>Z: %{z}<br>Group ID: %{username}",
+                              hovertemplate = "X: %{x}<br>Y: %{y}<br>Z: %{z}<br>Group ID: %{data$ena_groupVar}",
                               marker = list(
                                 size = 5,
                                 line = list(
                                   width = 0
                                 )
-                                #,name = labels[i] #rownames(nodes)[i]
+                                # ,name = labels[i] #rownames(nodes)[i]
                               ))
 
 
@@ -101,7 +101,7 @@ ena_comparison_plot_output <-  function(input, output, session,
                           scene = list(xaxis = list(title = input$x),
                                        yaxis = list(title = input$y),
                                        zaxis = list(title = input$z)),
-                          showlegend = FALSE)
+                          showlegend = TRUE)
       if(length(input$select_group) == 0){
         return(main_plot)
       }
