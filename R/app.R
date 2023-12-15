@@ -8,6 +8,8 @@ source('app_ui_model_tab.R')
 source('app_ui_data_upload_tab.R')
 library(shinyWidgets)
 source('app_server.R')
+source('app_module_ena_comparison_plot.R')
+
 library(shinyjs)
 library(R6)
 
@@ -80,7 +82,9 @@ app_server <- function(input, output, session) {
   ena_server_state$render_unit_group_change_plot <-reactive({
     ena_server_state$active_tab() == 'group_change'
   })
+  
   ena_app_server(id = "main_app",state=ena_server_state)
+  # ena_comparison_plot_server( "main_app")
 }
 
 shinyApp(app_ui, app_server)

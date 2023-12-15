@@ -40,12 +40,4 @@ get_mean_group_lineweights_in_groups <- function(ena_obj,groupVar,group_names){
   mean_group_lineweights
 
 }
-tilde_var_or_null = function(var_name){
-  result <- NULL
-  if(is.null(var_name)){
-    result <- NULL
-  }else{
-    result <- as.formula(paste("~",var_name))
-  }
-  result
-}
+

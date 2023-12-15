@@ -1,6 +1,7 @@
 source('build_network.R')
 source('transition.R')
 source('app_utils.R')
+source('app_module_ena_comparison_plot.R')
 library(shinyWidgets)
 
 ena_app_server <- function(id,state) {
@@ -25,7 +26,9 @@ ena_app_server <- function(id,state) {
                            current_unit_change_plot_camera=list(),
                            ena_groups=list(),
                            ena_groupVar=list(),
-                           ena_obj=list())
+                           ena_obj=list(),
+                           ena_points_plot_ready=FALSE,
+                           initialized=FALSE)
 
 
 
@@ -112,12 +115,6 @@ ena_app_server <- function(id,state) {
         my_labels
       })
 
-      # Calculate the edges
-      ena_lines_mean = reactive({
-        lineweights = as.matrix(rv$ena_obj$line.weights)
-        linesmean = as.vector(colMeans(lineweights))
-        linesmean
-      })
 
       ena_lines_mean_in_groups = reactive({
         get_mean_group_lineweights_in_groups(rv$ena_obj,rv$ena_groupVar[1],input$select_group)
@@ -128,109 +125,17 @@ ena_app_server <- function(id,state) {
 
       })
 
-      ena_plot_points = reactive({
-        my_points <- scaled_points()
-        my_points <- as.data.table(my_points)
-        colname = rv$ena_groupVar[1]
-        print('selected_group')
-        print(input$select_group)
-        print(colname)
-        print(colname %in% colnames(my_points))
-        filter_points = my_points[which(my_points[[colname]] %in% c(input$select_group))]
-
-        print('filter_points')
-        print(filter_points)
-
-        points_plot = add_trace(main_plot,
-                                data = filter_points,
-                                x = x_axis(),
-                                y = y_axis(),
-                                z = z_axis(),
-                                color = tilde_group_var_or_null(),
-                                colors = c('#BF382A', '#0C4B8E'),
-                                type = 'scatter3d',
-                                mode = "markers",
-                                # name = "Points",
-                                hovertemplate = "X: %{x}<br>Y: %{y}<br>Z: %{z}<br>Group ID: %{username}",
-                                marker = list(
-                                  size = 5,
-                                  line = list(
-                                    width = 0
-                                  )
-                                  #,name = labels[i] #rownames(nodes)[i]
-                                ))
-        points_plot
-      })
 
       "
         The plot in the model -> comparsion tab
       "
-      output$ena_points_plot <- renderPlotly({
-        # req(initialized(),cancelOutput = TRUE)
-        req(initialized(),cancelOutput = TRUE)
-
-        req(state$render_comparison(),cancelOutput = TRUE)
-        validate(
-          need(input$x != '',FALSE),
-          need(input$y != '',FALSE),
-          need(input$z != '',FALSE),
-        )
-        if(state$render_comparison() == FALSE){
-          return(NULL)
-        }
-
-        print('render comparsion')
-        # Create an empty plot
-
-        # Add the first trace (from points_plot)
-        main_plot <- ena_plot_points()
-
-        my_nodes <- scaled_nodes()
-        # Add the second trace (from nodes_plot)
-        main_plot <- add_trace(main_plot, data = my_nodes, x = x_axis(), y = y_axis(), z = z_axis(),
-                               type = 'scatter3d', mode = "markers", name = "Codes",
-                               marker = list(
-                                 size = abs(my_nodes$weight),
-                                 line = list(
-                                   width = 0
+      ena_comparison_plot_output(input, output, session,
+                                 rv,
+                                 state,
+                                 scaled_points(),
+                                 scaled_nodes(),
                                  )
-                                 #,name = labels[i] #rownames(nodes)[i]
-                               ))
-        t <- list(
-          family = "sans serif",
-          size = 14,
-          color = toRGB("grey50"))
-
-        # main_plot <-  add_text(main_plot,data=my_nodes,x = x_axis(), y = y_axis(), z = z_axis(),
-        #                        text = ~code,
-        #                        textfont=t,
-        #                        textposition = "top right")
-
-        # Customize the layout and appearance of the combined plot
-        main_plot <- layout(main_plot,
-                            scene = list(xaxis = list(title = input$x),
-                                         yaxis = list(title = input$y),
-                                         zaxis = list(title = input$z)),
-                            showlegend = FALSE)
-        if(length(input$select_group) == 0){
-          return(main_plot)
-        }
-
-        # Generate Edges
-        network <- build_network(scaled_nodes(),
-                                 network=ena_lines_mean_in_groups(),
-                                 adjacency.key=rv$ena_obj$rotation$adjacency.key)
-
-        main_plot <- plot_network(main_plot,
-                                  network,
-                                  legend.include.edges = F,
-                                  x_axis=input$x,
-                                  y_axis=input$y,
-                                  z_axis=input$z,
-                                  line_width = input$line_width)
-        main_plot
-      })
-
+     
       "
         The plot in the model->change tab
       "
@@ -324,9 +229,16 @@ ena_app_server <- function(id,state) {
         shinyjs::show("ena_points_plot")
 
         initialized(TRUE)
+        rv$initialized<- TRUE
       })
 
-
+      execute_at_next_input <- function(expr, session = getDefaultReactiveDomain()) {
+        observeEvent(once = TRUE, reactiveValuesToList(session$input), {
+          print(reactiveValuesToList(session$input))
+          force(expr)
+        }, ignoreInit = TRUE)
+      }
+      
       # create checkbox for select group in the model->comparison tab
       output$group_colors_container <- renderUI({
         n = length(rv$ena_groups)
@@ -359,18 +271,18 @@ ena_app_server <- function(id,state) {
         withProgress(message = 'Making plot', value = 0, {
           # Number of times we'll go through the loop
           # tm[input$group_change,]
-          axx <- list(
-            nticks = 4,
-            range = c(-3,3)
-          )
-          axy <- list(
-            nticks = 4,
-            range = c(-3,3)
-          )
-          axz <- list(
-            nticks = 4,
-            range = c(-3,3)
-          )
+          # axx <- list(
+          #   nticks = 4,
+          #   range = c(-3,3)
+          # )
+          # axy <- list(
+          #   nticks = 4,
+          #   range = c(-3,3)
+          # )
+          # axz <- list(
+          #   nticks = 4,
+          #   range = c(-3,3)
+          # )
           camera = list(
             eye=list(x=1.5, y=1.5, z=1.5)
           )
@@ -422,7 +334,7 @@ ena_app_server <- function(id,state) {
             )
 
             mplot <- mplot %>% layout(title = mtitle,
-                                      scene = list(xaxis=axx,yaxis=axy,zaxis=axz,camera=camera)
+                                      scene = list(camera=camera)
                                       )
             mplot  %>% toWebGL()
             rv$unit_group_change_plots[[as.character(current_group)]] <- mplot

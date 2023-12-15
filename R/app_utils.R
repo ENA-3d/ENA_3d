@@ -51,5 +51,13 @@ get_camera_position <- function(plot) {
     return(NULL)
   })
 }
-
+tilde_var_or_null = function(var_name){
+  result <- NULL
+  if(is.null(var_name)){
+    result <- NULL
+  }else{
+    result <- as.formula(paste("~",var_name))
+  }
+  result
+}
 
