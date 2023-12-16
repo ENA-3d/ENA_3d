@@ -23,7 +23,8 @@ ENA_3D_Server <- R6Class("ENA_3D_Server",
                     render_comparison = FALSE,
                     render_group_change = FALSE,
                     render_unit_group_change_plot=FALSE,
-                    initialize = function() {}
+                    
+                    initialize = function() {},
                   )
 )
 
@@ -37,7 +38,7 @@ app_ui <- function(){
       theme = bslib::bs_theme(bootswatch = "darkly"),
       sidebarLayout(
         sidebarPanel(
-          style = "min-height:90vh;",
+          style = "min-height:90vh;max-height:100vh;",
           navlistPanel(
             widths = c(3, 9),
             tabPanel("Data",

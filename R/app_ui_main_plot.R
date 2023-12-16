@@ -6,7 +6,7 @@ plot_ui <- function(id) {
   ns <- NS(id)
   tagList(
     plotlyOutput(NS(id,"ena_points_plot"),height = "100vh"),
-    plotlyOutput(NS(id,"ena_unit_group_change_plot"),height = "100ch")
+    plotlyOutput(NS(id,"ena_unit_group_change_plot"),height = "100vh")
 
   )
 }
