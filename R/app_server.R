@@ -7,10 +7,13 @@ source('transition.R')
 source('app_utils.R')
 source('app_module_ena_comparison_plot.R')
 source('app_module_ena_unit_group_change_plot.R')
+source('app_module_load_dataset.R')
+source('app_module_upload_data.R')
+source('app_module_sample_data.R')
 
 library(shinyWidgets)
 
-ena_app_server <- function(id,state) {
+ena_app_server <- function(id,state,config) {
   # Calling the moduleServer function
   moduleServer(
     # Setting the id
@@ -167,60 +170,9 @@ ena_app_server <- function(id,state) {
           shinyjs::hide("ena_points_plot")
         }
       })
-
-      # Upload file and load the ena obj in the environment
-      observeEvent(input$ena_data_file,{
-        print(paste0('Receive input file',input$ena_data_file))
-        file <- input$ena_data_file
-        ext <- tools::file_ext(file$datapath)
-
-        req(file)
-        validate(
-          need(ext == "Rdata" || ext == "RData", "Please upload a Rdata file")
-        )
-
-        print('load ena data')
-        env_ena_data <- load(file=file$datapath)
-        rv$ena_obj = get(env_ena_data)
-
-        # Find all Dimensions (MR1, SVD2, SVD3 ...)
-        dims <- list()
-        for(i in colnames(rv$ena_obj$points)){
-          if(i %!in% colnames(rv$ena_obj$meta.data)){
-            dims=append(dims,i)
-          }
-        }
-        print('update group var')
-        rv$ena_groupVar <- get_ena_group_var(rv$ena_obj)
-        # rv$ena_groups <- unique(as.data.frame(rv$ena_obj$points)[rv$ena_groupVar[1]])
-        rv$ena_groups <- unique(rv$ena_obj$points[,get(rv$ena_groupVar[1])])
-
-        print(paste0('rv$ena_groupVar:',typeof(rv$ena_groupVar)))
-        print(paste0('rv$ena_groupsL',typeof(rv$ena_groups)))
-
-        dim_choices <- unique(dims)
-        updateSelectInput(session, "x", choices = dim_choices, selected = dim_choices[1])
-        updateSelectInput(session, "y", choices = dim_choices, selected = dim_choices[2])
-        updateSelectInput(session, "z", choices = dim_choices, selected = dim_choices[3])
-
-        # update groups
-        updateSelectInput(session, "change_group_1", choices = rv$ena_groups, selected = rv$ena_groups[1])
-        updateSelectInput(session, "change_group_2", choices = rv$ena_groups, selected = rv$ena_groups[1])
-        # update unit selection
-        updateSelectInput(session, "group_change_var", choices = rv$ena_groupVar, selected = rv$ena_groupVar[1])
-
-
-        unit_slider_choices=sort(unique(rv$ena_obj$points[,get(rv$ena_groupVar[1])]))
-        updateSliderTextInput(session=session,inputId='unit_change',choices = unit_slider_choices)
-
-        print(paste0('choices:',rv$ena_groupVar))
-        # print(paste0(' updateSlider choices:',a))
-
-        shinyjs::show("ena_points_plot")
-
-        initialized(TRUE)
-        rv$initialized<- TRUE
-      })
+      
+      upload_data(input,output,session,rv)
+      sample_data_load_and_select(input,output,session,rv,config)
 
       # execute_at_next_input <- function(expr, session = getDefaultReactiveDomain()) {
       #   observeEvent(once = TRUE, reactiveValuesToList(session$input), {
@@ -238,6 +190,9 @@ ena_app_server <- function(id,state) {
                            selected=rv$ena_groups
         )
       })
+      
+
+      
     }
   )
 }

@@ -5,5 +5,7 @@ data_upload_ui <- function(id) {
   ns <- NS(id)
   tagList(
     fileInput(NS(id,"ena_data_file"), "Choose Rdata File", accept = c(".Rdata",".RData")),
+    selectInput(ns("sample_data"), "Sample dataset",choices=list()),
+    
   )
 }

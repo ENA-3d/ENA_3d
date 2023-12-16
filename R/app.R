@@ -13,6 +13,8 @@ source('app_module_ena_comparison_plot.R')
 library(shinyjs)
 library(R6)
 
+config = list()
+config$sample_data_path = normalizePath("../sample_data")
 "
 R6 class.
 It is an object used to communicate data between modules.
@@ -24,7 +26,7 @@ ENA_3D_Server <- R6Class("ENA_3D_Server",
                     render_group_change = FALSE,
                     render_unit_group_change_plot=FALSE,
                     
-                    initialize = function() {},
+                    initialize = function() {}
                   )
 )
 
@@ -84,7 +86,7 @@ app_server <- function(input, output, session) {
     ena_server_state$active_tab() == 'group_change'
   })
   
-  ena_app_server(id = "main_app",state=ena_server_state)
+  ena_app_server(id = "main_app",state=ena_server_state,config)
   # ena_comparison_plot_server( "main_app")
 }
 
