@@ -19,11 +19,45 @@ ena_comparison_plot_output <-  function(input, output, session,
     })
     
     tilde_group_var_or_null = reactive({
-      tilde_var_or_null(data$env_groupVar[1])
+      if(grepl(' ', data$ena_groupVar[1])){
+        as.formula(paste('~',sprintf("`%s`",data$ena_groupVar[1])))
+      }else{
+        tilde_var_or_null(data$ena_groupVar[1])
+      }
+      
     })
-
+    
+    get_select_group= reactive({
+      if(data$model_tab_clicked ==TRUE){
+        input$select_group
+      }else{
+        data$ena_groups
+      }
+    })
     ena_lines_mean_in_groups = reactive({
-      get_mean_group_lineweights_in_groups(data$ena_obj,data$ena_groupVar[1],input$select_group)
+      get_mean_group_lineweights_in_groups(state$ena_obj,data$ena_groupVar[1],get_select_group())
+    })
+    
+    get_colors = reactive({
+      print(scaled_points())
+      print(data$ena_obj)
+      print(state$is_app_initialized)
+
+      num_groups = length(unique(scaled_points()[,data$ena_groupVar[1]]))
+      
+      if(num_groups < length(state$color_list)){
+        
+      }else{
+        randomcoloR::distinctColorPalette(num_groups)
+      }
+    })
+    get_secondary_groups = reactive({
+      if(!is.na(data$ena_groupVar[2])){
+        print(state$ena_obj$points[,data$ena_groupVar[2]])
+        state$ena_obj$points[,data$ena_groupVar[2]]
+      }else{
+        c()
+      }
     })
     generate_plot = reactive({
       # req(initialized(),cancelOutput = TRUE)
@@ -31,6 +65,8 @@ ena_comparison_plot_output <-  function(input, output, session,
       print('generate plot')
       req(data$initialized,cancelOutput = TRUE)
       req(state$render_comparison(),cancelOutput = TRUE)
+      req(state$is_app_initialized,cancelOutput = TRUE)
+      req(!is.null(data$ena_obj),cancelOutput = TRUE)
       validate(
         need(input$x != '',FALSE),
         need(input$y != '',FALSE),
@@ -44,28 +80,34 @@ ena_comparison_plot_output <-  function(input, output, session,
       # Create an empty plot
 
       # Add the first trace (from points_plot)
-      my_points <- as.data.table(scaled_points)
+      my_points <- as.data.table(scaled_points())
       colname = data$ena_groupVar[1]
-      # print('selected_group')
-      # print(input$select_group)
-      # print(colname)
-      # print(colname %in% colnames(my_points))
-      filter_points = my_points[which(my_points[[colname]] %in% c(input$select_group))]
 
+      # Fix the bug of not showing edges when the dataset is loaded and the user hasn't open the model page      
+      print(data$model_tab_clicked)
+      print(input$select_group)
+      
+
+      filter_points <- my_points[which(my_points[[colname]] %in% get_select_group())]
+
+      
       print('filter_points')
       print(filter_points)
-
+      
+      
       main_plot = add_trace(main_plot,
                               data = filter_points,
                               x = x_axis(),
                               y = y_axis(),
                               z = z_axis(),
                               color = tilde_group_var_or_null(),
-                              colors = c('#BF382A', '#0C4B8E','#0c4111'),
+                              colors = get_colors(),
+                              text=get_secondary_groups(),
+                              # test=get_secondary_groups(),
                               type = 'scatter3d',
                               mode = "markers",
                               # name = "Points",
-                              hovertemplate = "X: %{x}<br>Y: %{y}<br>Z: %{z}<br>Group ID: %{data$ena_groupVar}",
+                              hovertemplate = "X: %{x}<br>Y: %{y}<br>Z: %{z}<br>Group : %{text}<br>%{test}",
                               marker = list(
                                 size = 5,
                                 line = list(
@@ -75,7 +117,7 @@ ena_comparison_plot_output <-  function(input, output, session,
                               ))
 
 
-      my_nodes <- scaled_nodes
+      my_nodes <- scaled_nodes()
       # Add the second trace (from nodes_plot)
       main_plot <- add_trace(main_plot, data = my_nodes, x = x_axis(), y = y_axis(), z = z_axis(),
                              type = 'scatter3d', mode = "markers", name = "Codes",
@@ -91,10 +133,10 @@ ena_comparison_plot_output <-  function(input, output, session,
         size = 14,
         color = toRGB("grey50"))
 
-      # main_plot <-  add_text(main_plot,data=my_nodes,x = x_axis(), y = y_axis(), z = z_axis(),
-      #                        text = ~code,
-      #                        textfont=t,
-      #                        textposition = "top right")
+      main_plot <-  add_text(main_plot,data=my_nodes,x = x_axis(), y = y_axis(), z = z_axis(),
+                             text = ~code,
+                             textfont=t,
+                             textposition = "top right")
 
       # Customize the layout and appearance of the combined plot
       main_plot <- layout(main_plot,
@@ -102,14 +144,14 @@ ena_comparison_plot_output <-  function(input, output, session,
                                        yaxis = list(title = input$y),
                                        zaxis = list(title = input$z)),
                           showlegend = TRUE)
-      if(length(input$select_group) == 0){
+      if(length(get_select_group()) == 0){
         return(main_plot)
       }
-
+      # browser()
       # Generate Edges
-      network <- build_network(scaled_nodes,
+      network <- build_network(scaled_nodes(),
                                network=ena_lines_mean_in_groups(),
-                               adjacency.key=data$ena_obj$rotation$adjacency.key)
+                               adjacency.key=state$ena_obj$rotation$adjacency.key)
 
       main_plot <- plot_network(main_plot,
                                 network,
@@ -130,4 +172,6 @@ ena_comparison_plot_output <-  function(input, output, session,
     output$ena_points_plot <- renderPlotly({
       generate_plot()
     })
+    
+
 }

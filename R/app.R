@@ -9,6 +9,7 @@ source('app_ui_data_upload_tab.R')
 library(shinyWidgets)
 source('app_server.R')
 source('app_module_ena_comparison_plot.R')
+source('color_list.R')
 
 library(shinyjs)
 library(R6)
@@ -25,7 +26,9 @@ ENA_3D_Server <- R6Class("ENA_3D_Server",
                     render_comparison = FALSE,
                     render_group_change = FALSE,
                     render_unit_group_change_plot=FALSE,
-                    
+                    ena_obj=NULL,
+                    color_list = color_list,
+                    is_app_initialized = FALSE,
                     initialize = function() {}
                   )
 )
@@ -40,9 +43,9 @@ app_ui <- function(){
       theme = bslib::bs_theme(bootswatch = "darkly"),
       sidebarLayout(
         sidebarPanel(
-          style = "min-height:90vh;max-height:100vh;",
+          style = "min-height:90vh;",
           navlistPanel(
-            widths = c(3, 9),
+            widths = c(4, 8),
             tabPanel("Data",
                      data_upload_ui(id = "main_app")
             ),

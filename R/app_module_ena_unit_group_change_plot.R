@@ -65,8 +65,8 @@ ena_unit_group_change_plot_output <- function(input,output,session,
                            textposition = "top right")
         
         c_network <- build_network(scaled_nodes,
-                                   network=get_mean_group_lineweights(rv_data$ena_obj,rv_data$ena_groupVar[1],current_group),
-                                   adjacency.key=rv_data$ena_obj$rotation$adjacency.key)
+                                   network=get_mean_group_lineweights(state$ena_obj,rv_data$ena_groupVar[1],current_group),
+                                   adjacency.key=state$ena_obj$rotation$adjacency.key)
         # print('start plotting network')
         mplot <- plot_network(mplot,
                               c_network,

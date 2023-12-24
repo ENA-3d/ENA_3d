@@ -37,7 +37,8 @@ ena_app_server <- function(id,state,config) {
                            ena_groupVar=list(),
                            ena_obj=list(),
                            ena_points_plot_ready=FALSE,
-                           initialized=FALSE)
+                           initialized=FALSE,
+                           model_tab_clicked=FALSE)
 
 
 
@@ -61,13 +62,13 @@ ena_app_server <- function(id,state,config) {
         tilde_var_or_null(rv$env_groupVar[1])
       })
 
-      ena_points <- reactive({
-        as.data.frame(rv$ena_obj$points)
-      })
+      ena_points <- function(){
+        as.data.frame(state$ena_obj$points)
+      }
 
-      ena_nodes <- reactive({
-        rv$ena_obj$rotation$nodes
-      })
+      ena_nodes <- function(){
+        state$ena_obj$rotation$nodes
+      }
 
       # Obtain the points position after scaling
       scaled_points <- reactive({
@@ -76,14 +77,14 @@ ena_app_server <- function(id,state,config) {
         }
         print(paste0('rv$ena_groupVar:',rv$ena_groupVar[1]))
         print(paste0('rv$ena_groups:',rv$ena_groups))
-
+        
         my_points = ena_points()
         print(my_points)
-
+        
         my_points[,rv$ena_groupVar[1]] <- as.character(my_points[,rv$ena_groupVar[1]])
 
-        for(i in colnames(rv$ena_obj$points)){
-          if(i %!in% colnames(rv$ena_obj$meta.data)){
+        for(i in colnames(state$ena_obj$points)){
+          if(i %!in% colnames(state$ena_obj$meta.data)){
             my_points[[i]] <- my_points[[i]]*scale_factor()
           }
         }
@@ -95,9 +96,9 @@ ena_app_server <- function(id,state,config) {
       # Obtain the codes position after scaling
       scaled_nodes <- reactive({
         node_points = ena_nodes()
-
-        for(i in colnames(rv$ena_obj$points)){
-          if(i %!in% colnames(rv$ena_obj$meta.data)){
+        test = rv$ena_groups
+        for(i in colnames(state$ena_obj$points)){
+          if(i %!in% colnames(state$ena_obj$meta.data)){
             node_points[[i]] <- node_points[[i]]*scale_factor()
           }
         }
@@ -126,11 +127,11 @@ ena_app_server <- function(id,state,config) {
 
 
       ena_lines_mean_in_groups = reactive({
-        get_mean_group_lineweights_in_groups(rv$ena_obj,rv$ena_groupVar[1],input$select_group)
+        get_mean_group_lineweights_in_groups(state$ena_obj,rv$ena_groupVar[1],input$select_group)
       })
 
       current_unit_slider_choice_sorted = reactive({
-        sort(unique(rv$ena_obj$points[,get(input$group_change_var)]))
+        sort(unique(state$ena_obj$points[,get(input$group_change_var)]))
 
       })
 
@@ -141,8 +142,8 @@ ena_app_server <- function(id,state,config) {
       ena_comparison_plot_output(input, output, session,
                                  rv,
                                  state,
-                                 scaled_points(),
-                                 scaled_nodes(),
+                                 scaled_points,
+                                 scaled_nodes,
                                  )
      
       "
@@ -162,7 +163,7 @@ ena_app_server <- function(id,state,config) {
           print('show comparison plot')
           shinyjs::show("ena_points_plot")
           shinyjs::hide("ena_unit_group_change_plot")
-
+          
         }
         if(state$render_unit_group_change_plot()){
           print('show unit group change plot')
@@ -171,8 +172,8 @@ ena_app_server <- function(id,state,config) {
         }
       })
       
-      upload_data(input,output,session,rv)
-      sample_data_load_and_select(input,output,session,rv,config)
+      upload_data(input,output,session,rv,state)
+      sample_data_load_and_select(input,output,session,rv,config,state)
 
       # execute_at_next_input <- function(expr, session = getDefaultReactiveDomain()) {
       #   observeEvent(once = TRUE, reactiveValuesToList(session$input), {
@@ -182,15 +183,21 @@ ena_app_server <- function(id,state,config) {
       # }
       
       # create checkbox for select group in the model->comparison tab
-      output$group_colors_container <- renderUI({
-        n = length(rv$ena_groups)
-        checkboxGroupInput(ns("select_group"), "Choose Unit:",
-                           choiceNames = rv$ena_groups,
-                           choiceValues = rv$ena_groups,
-                           selected=rv$ena_groups
-        )
-      })
+      # output$group_colors_container <- renderUI({
+      #   n = length(rv$ena_groups)
+      #   checkboxGroupInput(ns("select_group"), "Choose Group:",
+      #                      choiceNames = rv$ena_groups,
+      #                      choiceValues = rv$ena_groups,
+      #                      selected=rv$ena_groups
+      #   )
+      # })
       
+      
+      observeEvent(input$select_group,{
+        if(!is.null(input$select_group)){
+          rv$model_tab_clicked<-TRUE
+        }
+      })
 
       
     }

@@ -1,5 +1,5 @@
 source('app_module_load_dataset.R')
-sample_data_load_and_select = function(input,output,session,rv_data,config){
+sample_data_load_and_select = function(input,output,session,rv_data,config,state){
   sample_data_files = list.files(config$sample_data_path)
   sample_data_files = c('Select a sample dataset',sample_data_files)
   updateSelectInput(session, "sample_data", choices = sample_data_files,selected = sample_data_files[1])
@@ -12,7 +12,8 @@ sample_data_load_and_select = function(input,output,session,rv_data,config){
     
       print(paste0('select:',input$sample_data))
       file_path = file.path(config$sample_data_path,input$sample_data)
-      load_ena_data(input,output,session,file_path,rv_data)
+      rv_data$initialized<- FALSE
+      load_ena_data(input,output,session,file_path,rv_data,state)
     
     
 

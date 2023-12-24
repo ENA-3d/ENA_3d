@@ -1,20 +1,22 @@
-load_ena_data <- function(input,output,session,file_path,rv_data){
+load_ena_data <- function(input,output,session,file_path,rv_data,state){
     print('load ena data')
     
+  
     env_ena_data <- load(file=file_path)
     
-    rv_data$ena_obj = get(env_ena_data)
+    state$ena_obj = get(env_ena_data)
     
     # Find all Dimensions (MR1, SVD2, SVD3 ...)
     dims <- list()
-    for(i in colnames(rv_data$ena_obj$points)){
-      if(i %!in% colnames(rv_data$ena_obj$meta.data)){
+    for(i in colnames(state$ena_obj$points)){
+      if(i %!in% colnames(state$ena_obj$meta.data)){
         dims=append(dims,i)
       }
     }
     print('update group var')
-    rv_data$ena_groupVar <- get_ena_group_var(rv_data$ena_obj)
-    rv_data$ena_groups <- unique(rv_data$ena_obj$points[,get(rv_data$ena_groupVar[1])])
+    rv_data$ena_groupVar <- get_ena_group_var(state$ena_obj)
+  
+    rv_data$ena_groups <- unique(state$ena_obj$points[,get(rv_data$ena_groupVar[1])])
     
     print(paste0('rv_data$ena_groupVar:',typeof(rv_data$ena_groupVar)))
     print(paste0('rv_data$ena_groupsL',typeof(rv_data$ena_groups)))
@@ -31,15 +33,26 @@ load_ena_data <- function(input,output,session,file_path,rv_data){
     updateSelectInput(session, "group_change_var", choices = rv_data$ena_groupVar, selected = rv_data$ena_groupVar[1])
     
     
-    unit_slider_choices=sort(unique(rv_data$ena_obj$points[,get(rv_data$ena_groupVar[1])]))
+    unit_slider_choices=sort(unique(state$ena_obj$points[,get(rv_data$ena_groupVar[1])]))
     updateSliderTextInput(session=session,inputId='unit_change',choices = unit_slider_choices)
     
     print(paste0('choices:',rv_data$ena_groupVar))
     # print(paste0(' updateSlider choices:',a))
     
+    output$group_colors_container <- renderUI({
+      n = length(rv_data$ena_groups)
+      checkboxGroupInput(session$ns("select_group"), "Choose Group:",
+                         choiceNames = rv_data$ena_groups,
+                         choiceValues = rv_data$ena_groups,
+                         selected=rv_data$ena_groups
+                         
+      )
+    })
+    
     shinyjs::show("ena_points_plot")
     
     # initialized(TRUE)
     rv_data$initialized<- TRUE
+    state$is_app_initialized <- TRUE
   }
   
