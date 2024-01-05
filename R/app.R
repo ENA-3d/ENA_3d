@@ -34,18 +34,29 @@ ENA_3D_Server <- R6Class("ENA_3D_Server",
 )
 
 app_ui <- function(){
+
     fluidPage(
       shinyjs::useShinyjs(),
       tags$style(type="text/css",
-                 ".recalculating {opacity: 1.0;}"
+                 ".recalculating {opacity: 1.0;}
+                  .mysidebar .col-sm-2 .nav {--bs-nav-link-padding-x:0.2rem;font-size:13px}
+                  .mysidebar .col-sm-2 {padding:3px}
+                  .mysidebar .col-sm-2 .nav a {text-align:center}
+                  .mysidebar {height:100%}
+                  .mysidebar .col-sm-2 {height:100%}
+                  .mysidebar .col-sm-2 .nav {     align-items: center;
+                                                    justify-content: space-around;
+                                                    display: flex;
+                                                    height: 100%;}
+                 "
       ),
       titlePanel("ENA 3D"),
       theme = bslib::bs_theme(bootswatch = "darkly"),
       sidebarLayout(
         sidebarPanel(
-          style = "min-height:90vh;",
+          style = "min-height:80vh;height:100%",
           navlistPanel(
-            widths = c(4, 8),
+            widths = c(2, 10),
             tabPanel("Data",
                      data_upload_ui(id = "main_app")
             ),
@@ -55,12 +66,15 @@ app_ui <- function(){
             tabPanel("Plot Tools",
                       plot_settings_ui(id = "main_app")
             ),
-
-          ),
-          width = 5),
+            tabPanel("Stats",
+                     plot_settings_ui(id = "main_app")
+            ),
+          )%>% 
+            tagAppendAttributes(class= 'mysidebar'),
+          width = 3),
         mainPanel(
           plot_ui(id = "main_app"),
-          width = 7
+          width = 9
         )
       )
 
@@ -92,5 +106,5 @@ app_server <- function(input, output, session) {
   ena_app_server(id = "main_app",state=ena_server_state,config)
   # ena_comparison_plot_server( "main_app")
 }
-
+options(shiny.maxRequestSize = 50*1024^2)
 shinyApp(app_ui, app_server)
