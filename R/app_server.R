@@ -32,13 +32,14 @@ ena_app_server <- function(id,state,config) {
       # reactive values, served as global variable inside the server
       rv <- reactiveValues(myList = list(),
                            unit_group_change_plots=list(),
-                           current_unit_change_plot_camera=list(),
+                           current_camera=list(x=1.25, y=1.25, z=1.25),
                            ena_groups=list(),
                            ena_groupVar=list(),
                            ena_obj=list(),
                            ena_points_plot_ready=FALSE,
                            initialized=FALSE,
-                           model_tab_clicked=FALSE)
+                           model_tab_clicked=FALSE,
+                           comparison_plot=list())
 
 
 
@@ -144,6 +145,7 @@ ena_app_server <- function(id,state,config) {
                                  state,
                                  scaled_points,
                                  scaled_nodes,
+                                 rv$current_camera,
                                  )
      
       "

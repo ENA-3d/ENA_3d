@@ -60,4 +60,125 @@ tilde_var_or_null = function(var_name){
   }
   result
 }
-
+add_3d_axis = function(plot){
+  # Create a 3D plot with scatter3d trace for lines
+  plot <- plot %>%
+    add_trace(
+      type = "scatter3d",
+      mode = "lines+markers",
+      x = c(0,1),
+      y = c(0,0),
+      z = c(0,0),
+      line = list(color = "red", width = 2),
+      marker = list(size = 1, color = "red")
+    )
+  
+  cone_base_radius <- 1
+  cone_height <- 1
+  cone_center <- c(1, 0, 0)
+  
+  # Create a 3D plot with cone trace
+  plot <- plot %>%
+    add_trace(
+      type = "cone",
+      x = cone_center[1],
+      y = cone_center[2],
+      z = cone_center[3],
+      u = list(cone_height),
+      v = list(0),
+      w = list(0),
+      sizemode = "absolute",
+      sizeref = 0.2,
+      showscale = FALSE,
+      colorscale = list(c(0, 'red'), c(1, 'red')),
+      anchor = "tail"
+    )
+  
+  plot <- plot %>%
+    add_trace(
+      type = "scatter3d",
+      mode = "lines+markers",
+      x = c(0,0),
+      y = c(0,1),
+      z = c(0,0),
+      line = list(color = "blue", width = 2),
+      marker = list(size = 1, color = "blue")
+    )
+  plot <- plot %>% add_text(
+    x = cone_center[1],
+    y = cone_center[2],
+    z = cone_center[3]  + 0.1, # Adjust the height of the text above the cone
+    text = "X axis",
+    textfont=list(size = 12, color = "red")
+  )
+  
+  
+  cone_center <- c(0, 1, 0)
+  
+  # Create a 3D plot with cone trace
+  plot <- plot %>%
+    add_trace(
+      type = "cone",
+      x = cone_center[1],
+      y = cone_center[2],
+      z = cone_center[3],
+      u = list(0),
+      v = list(cone_height),
+      w = list(0),
+      sizemode = "absolute",
+      sizeref = 0.2,
+      showscale = FALSE,
+      colorscale = list(c(0, 'blue'), c(1, 'blue')),
+      anchor = "tail"
+    ) 
+  plot <- plot %>% add_text(
+    x = cone_center[1],
+    y = cone_center[2],
+    z = cone_center[3]  + 0.1, # Adjust the height of the text above the cone
+    text = "Y axis",
+    textfont=list(size = 12, color = "blue")
+  )
+  
+  
+  plot <- plot %>%
+    add_trace(
+      type = "scatter3d",
+      mode = "lines+markers",
+      x = c(0,0),
+      y = c(0,0),
+      z = c(0,1),
+      line = list(color = "green", width = 2),
+      marker = list(size = 1, color = "green")
+    )
+  
+  cone_center <- c(0, 0, 1)
+  
+  # Create a 3D plot with cone trace
+  plot <- plot %>%
+    add_trace(
+      type = "cone",
+      x = cone_center[1],
+      y = cone_center[2],
+      z = cone_center[3],
+      u = list(0),
+      v = list(0),
+      w = list(cone_height),
+      sizemode = "absolute",
+      sizeref = 0.2,
+      showscale = FALSE,
+      colorscale = list(c(0, 'green'), c(1, 'green')),
+      anchor = "tail"
+    ) 
+  plot <- plot %>% add_text(
+    x = cone_center[1],
+    y = cone_center[2],
+    z = cone_center[3]  + 0.1, # Adjust the height of the text above the cone
+    text = "Z axis",
+    textfont=list(size = 12, color = "green")
+  )
+  
+  plot <- layout(plot,title='X-Y',scene= list(camera=list(eye=list(x=0., y=0., z=-2.5))))
+  plot
+  
+  
+}

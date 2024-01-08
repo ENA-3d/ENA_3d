@@ -12,6 +12,23 @@ ena_unit_group_change_plot_output <- function(input,output,session,
   z_axis <- reactive({
     tilde_var_or_null(input$z)
   })
+  camera_eye<- reactive({
+    pos = input$camera_position
+    print(pos)
+    if(pos =='default'){
+      list(x=1.25, y=1.25, z=1.25)
+    }else if(pos =='x_y'){
+      list(x=0., y=0., z=-2.5)
+    }else if(pos == 'x_z'){
+      list(x=0., y=2.5, z=0.)
+    }else if(pos =='y_z'){
+      list(x=2.5, y=0., z=0.)
+    }
+  })
+  camera = reactive({
+    list(eye=camera_eye())
+  })
+  
   
   # make plots for all the groups and save it inside a list
   make_unit_group_change_plots <- reactive({
@@ -106,6 +123,7 @@ ena_unit_group_change_plot_output <- function(input,output,session,
     {
       if(rv_data$initialized && length(rv_data$unit_group_change_plots)>0){
         rv_data$unit_group_change_plots <- make_unit_group_change_plots()
+        
       }
     })
   
@@ -128,12 +146,14 @@ ena_unit_group_change_plot_output <- function(input,output,session,
     if(length(rv_data$unit_group_change_plots) == 0){
       print('length 0')
       rv_data$unit_group_change_plots=make_unit_group_change_plots()
-      rv_data$unit_group_change_plots[[as.character(input$unit_change)]]
+      p<-rv_data$unit_group_change_plots[[as.character(input$unit_change)]]
     }else{
       print('not length 0')
-      rv_data$unit_group_change_plots[[as.character(input$unit_change)]]
+      p<- rv_data$unit_group_change_plots[[as.character(input$unit_change)]]
+
     }
-    
+    p <- layout(p,title=input$camera_position,scene= list(camera=camera()))
+    p
     
   })
 }

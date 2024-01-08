@@ -10,6 +10,7 @@ library(shinyWidgets)
 source('app_server.R')
 source('app_module_ena_comparison_plot.R')
 source('color_list.R')
+source('app_ui_camera_position_panel.R')
 
 library(shinyjs)
 library(R6)
@@ -61,6 +62,7 @@ app_ui <- function(){
                      data_upload_ui(id = "main_app")
             ),
             tabPanel("Model",
+                     
                       model_ui(id = "main_app"),
                      ),
             tabPanel("Plot Tools",
@@ -73,6 +75,7 @@ app_ui <- function(){
             tagAppendAttributes(class= 'mysidebar'),
           width = 3),
         mainPanel(
+          camera_position_panel_ui(id = "main_app"),
           plot_ui(id = "main_app"),
           width = 9
         )

@@ -4,7 +4,8 @@ ena_comparison_plot_output <-  function(input, output, session,
                                         state,
                                         scaled_points,
                                         scaled_nodes,
-                                        group_var=NULL
+                                        group_var=NULL,
+                                        camera=NULL
                                         ) {
     # print('module server go with id')
     # print(id)
@@ -17,7 +18,22 @@ ena_comparison_plot_output <-  function(input, output, session,
     z_axis <- reactive({
       tilde_var_or_null(input$z)
     })
-    
+    camera_eye<- reactive({
+      pos = input$camera_position
+      print(pos)
+      if(pos =='default'){
+        list(x=1.25, y=1.25, z=1.25)
+      }else if(pos =='x_y'){
+        list(x=0., y=0., z=-2.5)
+      }else if(pos == 'x_z'){
+        list(x=0., y=2.5, z=0.)
+      }else if(pos =='y_z'){
+        list(x=2.5, y=0., z=0.)
+      }
+    })
+    camera = reactive({
+      list(eye=camera_eye())
+    })
     tilde_group_var_or_null = reactive({
       if(grepl(' ', data$ena_groupVar[1])){
         as.formula(paste('~',sprintf("`%s`",data$ena_groupVar[1])))
@@ -46,9 +62,10 @@ ena_comparison_plot_output <-  function(input, output, session,
       num_groups = length(unique(scaled_points()[,data$ena_groupVar[1]]))
       
       if(num_groups < length(state$color_list)){
-        
+        state$color_list[1:num_groups]
       }else{
         randomcoloR::distinctColorPalette(num_groups)
+        
       }
     })
     get_secondary_groups = reactive({
@@ -122,6 +139,7 @@ ena_comparison_plot_output <-  function(input, output, session,
       main_plot <- add_trace(main_plot, data = my_nodes, x = x_axis(), y = y_axis(), z = z_axis(),
                              type = 'scatter3d', mode = "markers", name = "Codes",
                              marker = list(
+                               color ='rgb(77,77,77)',
                                size = abs(my_nodes$weight),
                                line = list(
                                  width = 0
@@ -160,6 +178,16 @@ ena_comparison_plot_output <-  function(input, output, session,
                                 y_axis=input$y,
                                 z_axis=input$z,
                                 line_width = input$line_width)
+
+      if(!is.null(camera)){
+        print('set cam')
+        main_plot %>% layout(scene= list(camera=camera))
+      }
+      # camera = list(
+      #   eye=list(x=0., y=0., z=2.5)
+      # )
+      print(camera)
+      main_plot <- layout(main_plot,title=input$camera_position,scene= list(camera=camera()))
       main_plot
     })
     
@@ -170,7 +198,10 @@ ena_comparison_plot_output <-  function(input, output, session,
     #   plot_ly(data.frame(x=c(1,2,3),y=c(1,2,3)))
     # })
     output$ena_points_plot <- renderPlotly({
-      generate_plot()
+      comparison_plot <- generate_plot()
+      
+      comparison_plot <- add_3d_axis(comparison_plot)
+      comparison_plot
     })
     
 
