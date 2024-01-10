@@ -11,6 +11,7 @@ source('app_server.R')
 source('app_module_ena_comparison_plot.R')
 source('color_list.R')
 source('app_ui_camera_position_panel.R')
+source('app_ui_stats.R')
 
 library(shinyjs)
 library(R6)
@@ -69,7 +70,7 @@ app_ui <- function(){
                       plot_settings_ui(id = "main_app")
             ),
             tabPanel("Stats",
-                     plot_settings_ui(id = "main_app")
+                     stats_ui(id = "main_app")
             ),
           )%>% 
             tagAppendAttributes(class= 'mysidebar'),

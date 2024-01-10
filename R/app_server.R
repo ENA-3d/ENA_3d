@@ -10,6 +10,7 @@ source('app_module_ena_unit_group_change_plot.R')
 source('app_module_load_dataset.R')
 source('app_module_upload_data.R')
 source('app_module_sample_data.R')
+source('app_module_stats.R')
 
 library(shinyWidgets)
 
@@ -176,7 +177,7 @@ ena_app_server <- function(id,state,config) {
       
       upload_data(input,output,session,rv,state)
       sample_data_load_and_select(input,output,session,rv,config,state)
-
+      stats_module(input,output,session,rv,config,state)
       # execute_at_next_input <- function(expr, session = getDefaultReactiveDomain()) {
       #   observeEvent(once = TRUE, reactiveValuesToList(session$input), {
       #     print(reactiveValuesToList(session$input))
