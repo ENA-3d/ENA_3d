@@ -179,14 +179,14 @@ ena_comparison_plot_output <-  function(input, output, session,
                                 z_axis=input$z,
                                 line_width = input$line_width)
 
-      if(!is.null(camera)){
-        print('set cam')
-        main_plot %>% layout(scene= list(camera=camera))
-      }
+      # if(!is.null(camera)){
+      #   print('set cam')
+      #   main_plot %>% layout(scene= list(camera=camera))
+      # }
       # camera = list(
       #   eye=list(x=0., y=0., z=2.5)
       # )
-      print(camera)
+      print(camera())
       main_plot <- layout(main_plot,title=input$camera_position,scene= list(camera=camera()))
       main_plot
     })
@@ -201,6 +201,8 @@ ena_comparison_plot_output <-  function(input, output, session,
       comparison_plot <- generate_plot()
       
       comparison_plot <- add_3d_axis(comparison_plot)
+      print('new plot')
+
       comparison_plot
     })
     

@@ -177,7 +177,7 @@ add_3d_axis = function(plot){
     textfont=list(size = 12, color = "green")
   )
   
-  plot <- layout(plot,title='X-Y',scene= list(camera=list(eye=list(x=0., y=0., z=-2.5))))
+  # plot <- layout(plot,title='X-Y',scene= list(camera=list(eye=list(x=0., y=0., z=-2.5))))
   plot
   
   

@@ -1,0 +1,21 @@
+.container:has(.stats-box-row) {
+      background:white;
+      color:black;
+      border-radius:0.325rem;
+      padding:15px;
+      font-size:12px;
+      # display:flex;
+      # justify-content: center;
+    }
+    .container:has(.stats-box-row) table {
+      color:black;
+    }
+    .stats-box-row{
+      border: solid 1px;
+      border-width: 0px 0px 1px 0px;
+      margin: 0px 3px 0px 3px;
+    }
+    .stats-box-data-table > div{
+      display:flex;
+      justify-content: center
+    }
