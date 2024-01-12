@@ -28,7 +28,7 @@ This is an example of how you may set up your project locally. To get a local co
 2.  Open the project in RStudio and install the dependency
 
 ``` r
-    install.packages(c('shiny','plotly','collapse','shinyjs','R6','shinyWidgets','rENA'))
+    install.packages(c('shiny','plotly','collapse','shinyjs','R6','shinyWidgets','rENA','coin'))
 ```
 
 3.  Open *`app.R`* in the `R` folder and run the script. It should open the app as shown below. <img src="images/main_app.JPG" alt="Main app" class="jop-noMdConv" width="500px"/>

@@ -19,3 +19,9 @@
       display:flex;
       justify-content: center
     }
+    .tabbable ul {
+      font-size: 12px;
+      display:flex;
+      justify-content: space-around;
+      --bs-nav-link-padding-x:0.2rem;
+    }

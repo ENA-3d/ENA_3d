@@ -40,11 +40,12 @@ app_ui <- function(){
     fluidPage(
       shinyjs::useShinyjs(),
       tags$style(type="text/css",
-                 ".recalculating {opacity: 1.0;}
+                 "html{ font-size:0.9rem;}
+                  .recalculating {opacity: 1.0;}
                   .mysidebar .left-side .nav {--bs-nav-link-padding-x:0.2rem;font-size:13px}
                   .mysidebar .left-side {padding:3px}
                   .mysidebar .left-side .nav a {text-align:center}
-                  .mysidebar {height:90%}
+                  .mysidebar {height:95%}
                   .mysidebar .left-side {height:100%}
                   .mysidebar .left-side .nav {     
                         align-items: center;

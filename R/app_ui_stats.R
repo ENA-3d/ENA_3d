@@ -5,22 +5,47 @@ stats_ui <- function(id) {
   ns <- NS(id)
   fluidPage(
     fluidRow(
-      selectInput('stats_group1','Group 1',choices = c()),
-      selectInput('stats_group2','Group 2',choices = c())
-    ),
-    fluidRow(
-      stats_box(ns('stats_box_x_axis'),'X-axis','t'),
-      hr(),
-      stats_box(ns('stats_box_y_axis'),'Y-axis','t'),
-      hr(),
-      stats_box(ns('stats_box_z_axis'),'Z-axis','t'),
+      column(6,selectInput(ns('stats_group1'),'Group 1',choices = c())),
+      column(6,selectInput(ns('stats_group2'),'Group 2',choices = c()))
       
-    # stats_box(ns('stats_box_y_axis')),
-    # stats_box(ns('stats_box_z_axis')),
+    ),
+    # fluidRow(
+    #   stats_box(ns('stats_box_x_axis'),'X-axis','t'),
+    #   hr(),
+    #   stats_box(ns('stats_box_y_axis'),'Y-axis','t'),
+    #   hr(),
+    #   stats_box(ns('stats_box_z_axis'),'Z-axis','t'),
+    #   
+    # # stats_box(ns('stats_box_y_axis')),
+    # # stats_box(ns('stats_box_z_axis')),
+    # )
+    tabsetPanel(
+      tabPanel("T test", 
+                 stats_box(ns('stats_box_x_axis'),'X-axis'),
+                 hr(),
+                 stats_box(ns('stats_box_y_axis'),'Y-axis'),
+                 hr(),
+                 stats_box(ns('stats_box_z_axis'),'Z-axis'),
+      ),
+      tabPanel("Wilcoxon",
+               stats_box(ns('stats_box_x_axis_wilcox_unpaired'),'X-axis'),
+               hr(),
+               stats_box(ns('stats_box_y_axis_wilcox_unpaired'),'Y-axis'),
+               hr(),
+               stats_box(ns('stats_box_z_axis_wilcox_unpaired'),'Z-axis'),
+      ),
+      tabPanel("Wilcoxon Paired",
+               stats_box(ns('stats_box_x_axis_wilcox_paired'),'X-axis'),
+               hr(),
+               stats_box(ns('stats_box_y_axis_wilcox_paired'),'Y-axis'),
+               hr(),
+               stats_box(ns('stats_box_z_axis_wilcox_paired'),'Z-axis'),
+               
+               )
     )
   )
 }
-stats_box <- function(id,axis,test_type_value){
+stats_box <- function(id,axis){
   ns <- NS(id)
   fixedPage(
     tags$head(
@@ -46,10 +71,6 @@ stats_box <- function(id,axis,test_type_value){
     fluidRow(
       column(6,textOutput(ns('test_type'))),
       column(6,textOutput(ns('test_type_value')))
-    )%>% tagAppendAttributes(class="stats-box-row"),
-    fluidRow(
-      column(6,'df'),
-      column(6,textOutput(ns('df_value')))
     )%>% tagAppendAttributes(class="stats-box-row"),
     fluidRow(
       column(6,textOutput(ns('conf_level'))),

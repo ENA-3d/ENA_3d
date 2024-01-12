@@ -33,6 +33,9 @@ load_ena_data <- function(input,output,session,file_path,rv_data,state){
     updateSelectInput(session, "group_change_var", choices = rv_data$ena_groupVar, selected = rv_data$ena_groupVar[1])
     
     
+    updateSelectInput(session, "stats_group1", choices = rv_data$ena_groups, selected = rv_data$ena_groups[1])
+    updateSelectInput(session, "stats_group2", choices = rv_data$ena_groups, selected = rv_data$ena_groups[1])
+    
     unit_slider_choices=sort(unique(state$ena_obj$points[,get(rv_data$ena_groupVar[1])]))
     updateSliderTextInput(session=session,inputId='unit_change',choices = unit_slider_choices)
     
