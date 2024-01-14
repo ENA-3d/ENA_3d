@@ -12,7 +12,10 @@ camera_position_panel_ui <- function(id) {
                 c("Default 3D Camera" = "default",
                 "X-Y Plane" = "x_y",
                 "X-Z Plane" = "x_z",
-                "Y-Z Plane" = "y_z"),
+                "Y-Z Plane" = "y_z",
+                "Y-X Plane" = "y_x",
+                "Z-X Plane" = "z_x",
+                "Z-Y Plane" = "z_y"),
                 selected = 'default',
                 inline=TRUE)
   )

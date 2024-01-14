@@ -278,4 +278,32 @@ plot_network_improve <- function(ena_plot,
 
   ena_plot
 }
-
+# 
+# X='MR1';Y='SVD2';Z='SVD3'
+# lm <- get_mean_group_lineweights_in_groups(ena_obj,'groupid','1')
+# nw <- build_network(nodes,network = lm,adjacency.key = ena_obj$rotation$adjacency.key)
+# p<-plot_network(plot_ly(),nw,x_axis = X,y_axis = Y,z_axis = Z,line_width = 2)
+# p<- layout(p,
+#            scene=list(camera=list(eye=list(x=0., y=0, z=-2.5)),xaxis = list(title = X),
+#             yaxis = list(title = Y),
+#             zaxis = list(title = Z)))
+# p <- add_trace(p, data = nodes, x = as.formula(paste0('~',X)), y = as.formula(paste0('~',Y)), z = as.formula(paste0('~',Z)),
+#                        type = 'scatter3d', mode = "markers", name = "Codes",
+#                        marker = list(
+#                          color ='rgb(77,77,77)',
+#                          line = list(
+#                            width = 0
+#                          )
+#                          #,name = labels[i] #rownames(nodes)[i]
+#                        ))
+# t <- list(
+#   family = "sans serif",
+#   size = 14,
+#   color = toRGB("grey50"))
+# 
+# p <-  add_text(p,data=nodes,x = as.formula(paste0('~',X)), y = as.formula(paste0('~',Y)), z = as.formula(paste0('~',Z)),
+#                        text = ~code,
+#                        textfont=t,
+#                        textposition = "top right")
+# p<-add_3d_axis(p)
+# p

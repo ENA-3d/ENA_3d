@@ -24,15 +24,32 @@ ena_comparison_plot_output <-  function(input, output, session,
       if(pos =='default'){
         list(x=1.25, y=1.25, z=1.25)
       }else if(pos =='x_y'){
-        list(x=0., y=0., z=-2.5)
+        list(x=0, y=0, z=2.5)
       }else if(pos == 'x_z'){
-        list(x=0., y=2.5, z=0.)
+        list(x=0., y=-2.5, z=0.)
       }else if(pos =='y_z'){
-        list(x=2.5, y=0., z=0.)
+        list(x=-2.5, y=0., z=0.)
       }
     })
     camera = reactive({
-      list(eye=camera_eye())
+      pos = input$camera_position
+      print(pos)
+      if(pos =='default'){
+        camera = list(eye=list(x=1.25, y=1.25, z=1.25))
+      }else if(pos =='x_y'){
+        camera = list(eye=list(x=0, y=0, z=2.5),up=list(x=0,y=1,z=0))
+      }else if(pos == 'x_z'){
+        camera = list(eye=list(x=0., y=-2.5, z=0.),up=list(x=0,y=0,z=1))
+      }else if(pos =='y_z'){
+        camera = list(eye=list(x=2.5, y=0., z=0.),up=list(x=0,y=0,z=1))
+      }else if(pos =='y_x'){
+        camera = list(eye=list(x=0, y=0, z=-2.5),up=list(x=1,y=0,z=0))
+      }else if(pos =='z_x'){
+        camera = list(eye=list(x=0, y=2.5, z=0),up=list(x=1,y=0,z=0))
+      }else if(pos =='z_y'){
+        camera = list(eye=list(x=-2.5, y=0, z=0),up=list(x=0,y=1,z=0))
+      }
+      # list(eye=camera_eye(),up=list(x=0,y=1,z=0))
     })
     tilde_group_var_or_null = reactive({
       if(grepl(' ', data$ena_groupVar[1])){
@@ -78,7 +95,7 @@ ena_comparison_plot_output <-  function(input, output, session,
     })
     generate_plot = reactive({
       # req(initialized(),cancelOutput = TRUE)
-      main_plot <- plot_ly()
+      main_plot <- plot_ly(source='plot_correlation')
       print('generate plot')
       req(data$initialized,cancelOutput = TRUE)
       req(state$render_comparison(),cancelOutput = TRUE)
@@ -158,9 +175,9 @@ ena_comparison_plot_output <-  function(input, output, session,
 
       # Customize the layout and appearance of the combined plot
       main_plot <- layout(main_plot,
-                          scene = list(xaxis = list(title = input$x),
-                                       yaxis = list(title = input$y),
-                                       zaxis = list(title = input$z)),
+                          scene = list(xaxis = list(title = input$x,showgrid=input$show_grid),
+                                       yaxis = list(title = input$y,showgrid=input$show_grid),
+                                       zaxis = list(title = input$z,showgrid=input$show_grid)),
                           showlegend = TRUE)
       if(length(get_select_group()) == 0){
         return(main_plot)
@@ -201,10 +218,27 @@ ena_comparison_plot_output <-  function(input, output, session,
       comparison_plot <- generate_plot()
       
       comparison_plot <- add_3d_axis(comparison_plot)
+      
       print('new plot')
-
+      event_register(comparison_plot, 'plotly_relayout')
+      # click_data <- event_data("plotly_click", source = "ena_points_plot")
+      # 
+      # if (!is.null(click_data)) {
+      #   print(str(click_data))
+      #   # idx <- click_data$pointNumber + 1
+      #   # data[idx, "col"] <- "red"
+      # }      
+      
+      
       comparison_plot
     })
     
+    observeEvent(event_data(event = "plotly_relayout",source='plot_correlation'),{
+      clicked <- event_data(event = "plotly_relayout",
+                            source = "plot_correlation")
+      if (!is.null(clicked)) {
+        print(clicked)
+      }
+    })
 
 }

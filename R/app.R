@@ -12,7 +12,8 @@ source('app_module_ena_comparison_plot.R')
 source('color_list.R')
 source('app_ui_camera_position_panel.R')
 source('app_ui_stats.R')
-
+library(shiny.fluent)
+library(coin)
 library(shinyjs)
 library(R6)
 
