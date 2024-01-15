@@ -93,6 +93,23 @@ ena_comparison_plot_output <-  function(input, output, session,
         c()
       }
     })
+    add_3d_axis_based_on_user_selection = function(plot){
+      if(input$show_x_axis_arrow){
+        plot<-add_x_3d_axis(plot)
+      }
+      if(input$show_y_axis_arrow){
+        plot<-add_y_3d_axis(plot)
+      }
+      if(input$show_z_axis_arrow){
+        plot<-add_z_3d_axis(plot)
+      }
+      
+      # plot <- layout(plot,title='X-Y',scene= list(camera=list(eye=list(x=0., y=0., z=-2.5))))
+      plot
+      
+      
+    }
+    
     generate_plot = reactive({
       # req(initialized(),cancelOutput = TRUE)
       main_plot <- plot_ly(source='plot_correlation')
@@ -129,26 +146,26 @@ ena_comparison_plot_output <-  function(input, output, session,
       print(filter_points)
       
       
-      main_plot = add_trace(main_plot,
-                              data = filter_points,
-                              x = x_axis(),
-                              y = y_axis(),
-                              z = z_axis(),
-                              color = tilde_group_var_or_null(),
-                              colors = get_colors(),
-                              text=get_secondary_groups(),
-                              # test=get_secondary_groups(),
-                              type = 'scatter3d',
-                              mode = "markers",
-                              # name = "Points",
-                              hovertemplate = "X: %{x}<br>Y: %{y}<br>Z: %{z}<br>Group : %{text}<br>%{test}",
-                              marker = list(
-                                size = 5,
-                                line = list(
-                                  width = 0
-                                )
-                                # ,name = labels[i] #rownames(nodes)[i]
-                              ))
+      # main_plot = add_trace(main_plot,
+      #                         data = filter_points,
+      #                         x = x_axis(),
+      #                         y = y_axis(),
+      #                         z = z_axis(),
+      #                         color = tilde_group_var_or_null(),
+      #                         colors = get_colors(),
+      #                         text=get_secondary_groups(),
+      #                         # test=get_secondary_groups(),
+      #                         type = 'scatter3d',
+      #                         mode = "markers",
+      #                         # name = "Points",
+      #                         hovertemplate = "X: %{x}<br>Y: %{y}<br>Z: %{z}<br>Group : %{text}<br>%{test}",
+      #                         marker = list(
+      #                           size = 5,
+      #                           line = list(
+      #                             width = 0
+      #                           )
+      #                           # ,name = labels[i] #rownames(nodes)[i]
+      #                         ))
 
 
       my_nodes <- scaled_nodes()
@@ -179,13 +196,39 @@ ena_comparison_plot_output <-  function(input, output, session,
                                        yaxis = list(title = input$y,showgrid=input$show_grid),
                                        zaxis = list(title = input$z,showgrid=input$show_grid)),
                           showlegend = TRUE)
-      if(length(get_select_group()) == 0){
-        return(main_plot)
-      }
+      # if(length(get_select_group()) == 0){
+      #   return(main_plot)
+      # }
       # browser()
+      
+      if(input$compare_group_1 == input$compare_group_2){
+        network <- get_mean_group_lineweights(state$ena_obj,data$ena_groupVar[1],input$compare_group_1)
+      }else{
+        g1.mean=get_mean_group_lineweights(state$ena_obj,data$ena_groupVar[1],input$compare_group_1)
+        g2.mean=get_mean_group_lineweights(state$ena_obj,data$ena_groupVar[1],input$compare_group_2)
+        
+        subtracted.network <- g1.mean - g2.mean
+        
+        network<- subtracted.network
+      }
+
+      
+      # network <- build_network(scaled_nodes(),
+      #                          network=subtracted.network,
+      #                          adjacency.key=state$ena_obj$rotation$adjacency.key)
+      # main_plot<-plot_ly()
+      # main_plot <- plot_network(main_plot,
+      #                           network,
+      #                           legend.include.edges = F,
+      #                           x_axis=input$x,
+      #                           y_axis=input$y,
+      #                           z_axis=input$z,
+      #                           line_width = input$line_width)
+      # main_plot
+      
       # Generate Edges
       network <- build_network(scaled_nodes(),
-                               network=ena_lines_mean_in_groups(),
+                               network=network,
                                adjacency.key=state$ena_obj$rotation$adjacency.key)
 
       main_plot <- plot_network(main_plot,
@@ -216,21 +259,22 @@ ena_comparison_plot_output <-  function(input, output, session,
     # })
     output$ena_points_plot <- renderPlotly({
       comparison_plot <- generate_plot()
-      
-      comparison_plot <- add_3d_axis(comparison_plot)
-      
+
+      comparison_plot <- add_3d_axis_based_on_user_selection(comparison_plot)
+
       print('new plot')
       event_register(comparison_plot, 'plotly_relayout')
       # click_data <- event_data("plotly_click", source = "ena_points_plot")
-      # 
+      #
       # if (!is.null(click_data)) {
       #   print(str(click_data))
       #   # idx <- click_data$pointNumber + 1
       #   # data[idx, "col"] <- "red"
-      # }      
-      
-      
+      # }
+
+
       comparison_plot
+      
     })
     
     observeEvent(event_data(event = "plotly_relayout",source='plot_correlation'),{

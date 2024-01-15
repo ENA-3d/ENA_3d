@@ -61,6 +61,16 @@ tilde_var_or_null = function(var_name){
   result
 }
 add_3d_axis = function(plot){
+  plot<-add_x_3d_axis(plot)
+  plot<-add_y_3d_axis(plot)
+  plot<-add_z_3d_axis(plot)
+  
+  # plot <- layout(plot,title='X-Y',scene= list(camera=list(eye=list(x=0., y=0., z=-2.5))))
+  plot
+  
+  
+}
+add_x_3d_axis<-function(plot){
   # Create a 3D plot with scatter3d trace for lines
   plot <- plot %>%
     add_trace(
@@ -94,6 +104,19 @@ add_3d_axis = function(plot){
       anchor = "tail"
     )
   
+  
+  plot <- plot %>% add_text(
+    x = cone_center[1],
+    y = cone_center[2],
+    z = cone_center[3]  + 0.1, # Adjust the height of the text above the cone
+    text = "X axis",
+    textfont=list(size = 12, color = "red")
+  )
+  plot
+}
+add_y_3d_axis<-function(plot){
+  cone_base_radius <- 1
+  cone_height <- 1
   plot <- plot %>%
     add_trace(
       type = "scatter3d",
@@ -104,14 +127,6 @@ add_3d_axis = function(plot){
       line = list(color = "blue", width = 2),
       marker = list(size = 1, color = "blue")
     )
-  plot <- plot %>% add_text(
-    x = cone_center[1],
-    y = cone_center[2],
-    z = cone_center[3]  + 0.1, # Adjust the height of the text above the cone
-    text = "X axis",
-    textfont=list(size = 12, color = "red")
-  )
-  
   
   cone_center <- c(0, 1, 0)
   
@@ -138,8 +153,11 @@ add_3d_axis = function(plot){
     text = "Y axis",
     textfont=list(size = 12, color = "blue")
   )
-  
-  
+  plot
+}
+add_z_3d_axis<-function(plot){
+  cone_base_radius <- 1
+  cone_height <- 1
   plot <- plot %>%
     add_trace(
       type = "scatter3d",
@@ -176,9 +194,5 @@ add_3d_axis = function(plot){
     text = "Z axis",
     textfont=list(size = 12, color = "green")
   )
-  
-  # plot <- layout(plot,title='X-Y',scene= list(camera=list(eye=list(x=0., y=0., z=-2.5))))
   plot
-  
-  
 }

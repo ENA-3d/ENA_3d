@@ -27,7 +27,7 @@ ENA_3D_Server <- R6Class("ENA_3D_Server",
                   public = list(
                     active_tab = NULL,
                     render_comparison = FALSE,
-                    render_group_change = FALSE,
+                    render_overall = FALSE,
                     render_unit_group_change_plot=FALSE,
                     ena_obj=NULL,
                     color_list = color_list,
@@ -156,8 +156,8 @@ app_server <- function(input, output, session) {
   ena_server_state$render_comparison <- reactive({
     ena_server_state$active_tab() == 'comparison_plot'
   })
-  ena_server_state$render_group_change <- reactive({
-    ena_server_state$active_tab() == 'two_group'
+  ena_server_state$render_overall <- reactive({
+    ena_server_state$active_tab() == 'overall'
   })
   ena_server_state$render_unit_group_change_plot <-reactive({
     ena_server_state$active_tab() == 'group_change'

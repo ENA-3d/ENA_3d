@@ -93,7 +93,12 @@ build_network = function(node.positions,network,edge_type = "line",
 
   network.saturation = scales::rescale(x = abs(network.scaled), to = scale.range, from = saturation);
   network.opacity = scales::rescale(x = abs(network.scaled), to = scale.range, from = opacity);
-
+  
+  "Control the color for subtracted network.
+  In a subtracted network, we subtract group 1 from group 2. 
+  If group 1 is greater than group 2, the result would be positive, therefore the line should be of color of group 1.
+  Otherwise, if the result if negative, then the group 2 is greater than group 2. Therefore the line should of of group 2's color.
+  "
   pos.inds = as.numeric(which(network.scaled >=0));
   neg.inds = as.numeric(which(network.scaled < 0));
 

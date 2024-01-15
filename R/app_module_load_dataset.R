@@ -39,6 +39,9 @@ load_ena_data <- function(input,output,session,file_path,rv_data,state){
     unit_slider_choices=sort(unique(state$ena_obj$points[,get(rv_data$ena_groupVar[1])]))
     updateSliderTextInput(session=session,inputId='unit_change',choices = unit_slider_choices)
     
+    updateSelectInput(session, "compare_group_1", choices = rv_data$ena_groups, selected = rv_data$ena_groups[1])
+    updateSelectInput(session, "compare_group_2", choices = rv_data$ena_groups, selected = rv_data$ena_groups[1])
+    
     print(paste0('choices:',rv_data$ena_groupVar))
     # print(paste0(' updateSlider choices:',a))
     

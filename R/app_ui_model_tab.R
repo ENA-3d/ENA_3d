@@ -7,7 +7,9 @@ model_ui <- function(id) {
 
     tabsetPanel(
       id = ns("mytabs"),
-      tabPanel("Comparison",value = "comparison_plot", model_comparison_ui(id)),
+      tabPanel("Model",value = "overall_model", model_overall_model_ui(id)),
+      
+      tabPanel("Comparison",value = "comparison_plot", model_two_group_comparison_ui(id)),
       tabPanel("Change",value = "group_change", model_group_change_ui(id)),
       # tabPanel("Two Group",value = "two_group",model_two_group_change_ui(id))
 
@@ -23,12 +25,33 @@ model_two_group_change_ui <- function(id){
     sliderInput(ns("group_change"), "Group Change", value = 1, min = 1, max = 10)
   )
 }
+model_two_group_comparison_ui <- function(id){
+  ns <- NS(id)
+  tagList(
+    selectInput(ns("compare_group_1"), "Group 1",choices=list()),
+    selectInput(ns("compare_group_2"), "Group 2", choices=list()),
+  )
+}
 
-model_comparison_ui <- function(id){
+model_overall_model_ui <- function(id){
   ns <- NS(id)
   tagList(
     # actionButton(ns('g1'),'Group 1'),
     # actionButton(ns('g2'),'Group 1')
+    virtualSelectInput(
+      inputId = "id",
+      label = "Select:",
+      choices = list(
+        "Spring" = c("March", "April", "May"),
+        "Summer" = c("June", "July", "August"),
+        "Autumn" = c("September", "October", "November"),
+        "Winter" = c("December", "January", "February")
+      ),
+      showValueAsTags = TRUE,
+      search = TRUE,
+      multiple = TRUE
+    ),
+    
     uiOutput(ns('group_colors_container'))
   )
 }
