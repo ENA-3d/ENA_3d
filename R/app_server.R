@@ -11,7 +11,7 @@ source('app_module_load_dataset.R')
 source('app_module_upload_data.R')
 source('app_module_sample_data.R')
 source('app_module_stats.R')
-
+source('app_module_overall_model.R')
 library(shinyWidgets)
 
 ena_app_server <- function(id,state,config) {
@@ -158,20 +158,36 @@ ena_app_server <- function(id,state,config) {
                                         scaled_points(),
                                         scaled_nodes()
                                         )
-
+      
+      ena_overall_plot_output(input, output, session,
+                              rv,
+                              state,
+                              scaled_points,
+                              scaled_nodes,
+                              rv$current_camera,
+      )
+      
+      
       # Hide or show the corresponding plot, depending on which tab is active
       observeEvent(state$active_tab(),{
-
+        # browser()
         if(state$render_comparison()){
           print('show comparison plot')
           shinyjs::show("ena_points_plot")
           shinyjs::hide("ena_unit_group_change_plot")
-          
+          shinyjs::hide('ena_overall_plot')
         }
         if(state$render_unit_group_change_plot()){
           print('show unit group change plot')
           shinyjs::show("ena_unit_group_change_plot")
           shinyjs::hide("ena_points_plot")
+          shinyjs::hide('ena_overall_plot')
+        }
+        if(state$render_overall()){
+          print('show unit group change plot')
+          shinyjs::hide("ena_unit_group_change_plot")
+          shinyjs::hide("ena_points_plot")
+          shinyjs::show('ena_overall_plot')
         }
       })
       

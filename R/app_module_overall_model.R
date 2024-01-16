@@ -66,10 +66,11 @@ ena_overall_plot_output <-  function(input, output, session,
     }else{
       data$ena_groups
     }
-  })
-  ena_lines_mean_in_groups = reactive({
-    get_mean_group_lineweights_in_groups(state$ena_obj,data$ena_groupVar[1],get_select_group())
-  })
+  })%>% debounce(5000)
+  
+  # ena_lines_mean_in_groups = reactive({
+  #   get_mean_group_lineweights_in_groups(state$ena_obj,data$ena_groupVar[1],get_select_group())
+  # })
   
   get_colors = reactive({
     print(scaled_points())
@@ -93,12 +94,28 @@ ena_overall_plot_output <-  function(input, output, session,
       c()
     }
   })
+  add_3d_axis_based_on_user_selection = function(plot){
+    if(input$show_x_axis_arrow){
+      plot<-add_x_3d_axis(plot)
+    }
+    if(input$show_y_axis_arrow){
+      plot<-add_y_3d_axis(plot)
+    }
+    if(input$show_z_axis_arrow){
+      plot<-add_z_3d_axis(plot)
+    }
+    
+    # plot <- layout(plot,title='X-Y',scene= list(camera=list(eye=list(x=0., y=0., z=-2.5))))
+    plot
+    
+    
+  }
   generate_plot = reactive({
     # req(initialized(),cancelOutput = TRUE)
-    main_plot <- plot_ly(source='plot_correlation')
+    main_plot <- plot_ly()
     print('generate plot')
     req(data$initialized,cancelOutput = TRUE)
-    req(state$render_comparison(),cancelOutput = TRUE)
+    req(state$render_overall(),cancelOutput = TRUE)
     req(state$is_app_initialized,cancelOutput = TRUE)
     req(!is.null(data$ena_obj),cancelOutput = TRUE)
     validate(
@@ -106,11 +123,11 @@ ena_overall_plot_output <-  function(input, output, session,
       need(input$y != '',FALSE),
       need(input$z != '',FALSE),
     )
-    if(state$render_comparison() == FALSE){
+    if(state$render_overall() == FALSE){
       return(NULL)
     }
     
-    print('render comparsion')
+    print('render overall')
     # Create an empty plot
     
     # Add the first trace (from points_plot)
@@ -121,8 +138,8 @@ ena_overall_plot_output <-  function(input, output, session,
     print(data$model_tab_clicked)
     print(input$select_group)
     
-    
-    filter_points <- my_points[which(my_points[[colname]] %in% get_select_group())]
+    selected_groups <- get_select_group()
+    filter_points <- my_points[which(my_points[[colname]] %in% selected_groups)]
     
     
     print('filter_points')
@@ -179,13 +196,14 @@ ena_overall_plot_output <-  function(input, output, session,
                                      yaxis = list(title = input$y,showgrid=input$show_grid),
                                      zaxis = list(title = input$z,showgrid=input$show_grid)),
                         showlegend = TRUE)
-    if(length(get_select_group()) == 0){
+    if(length(selected_groups) == 0){
       return(main_plot)
     }
     # browser()
     # Generate Edges
+    mean_in_groups<-get_mean_group_lineweights_in_groups(state$ena_obj,data$ena_groupVar[1],selected_groups)
     network <- build_network(scaled_nodes(),
-                             network=ena_lines_mean_in_groups(),
+                             network=mean_in_groups,
                              adjacency.key=state$ena_obj$rotation$adjacency.key)
     
     main_plot <- plot_network(main_plot,
@@ -214,10 +232,10 @@ ena_overall_plot_output <-  function(input, output, session,
   #   # generate_plot()
   #   plot_ly(data.frame(x=c(1,2,3),y=c(1,2,3)))
   # })
-  output$ena_points_plot <- renderPlotly({
+  output$ena_overall_plot <- renderPlotly({
     comparison_plot <- generate_plot()
 
-    comparison_plot <- add_3d_axis(comparison_plot)
+    comparison_plot <- add_3d_axis_based_on_user_selection(comparison_plot)
 
     print('new plot')
     event_register(comparison_plot, 'plotly_relayout')
@@ -231,42 +249,7 @@ ena_overall_plot_output <-  function(input, output, session,
 
 
     comparison_plot
-    #___________________________
-    # req(data$initialized,cancelOutput = TRUE)
-    # req(state$render_comparison(),cancelOutput = TRUE)
-    # req(state$is_app_initialized,cancelOutput = TRUE)
-    # req(!is.null(data$ena_obj),cancelOutput = TRUE)
-    # validate(
-    #   need(input$x != '',FALSE),
-    #   need(input$y != '',FALSE),
-    #   need(input$z != '',FALSE),
-    # )
-    # if(state$render_comparison() == FALSE){
-    #   return(NULL)
-    # }
-    # g1.lineweights = as.matrix(state$ena_obj$line.weights$groupid$`1`)
-    # g1.mean = colMeans(g1.lineweights)
-    # 
-    # g2.lineweights = as.matrix(state$ena_obj$line.weights$groupid$`2`)
-    # g2.mean = colMeans(g2.lineweights)
-    
-    # g1.mean=get_mean_group_lineweights(state$ena_obj,'groupid','1')
-    # g2.mean=get_mean_group_lineweights(state$ena_obj,'groupid','2')
-    # 
-    # subtracted.network = g1.mean - g2.mean
-    # 
-    # network <- build_network(scaled_nodes(),
-    #                          network=subtracted.network,
-    #                          adjacency.key=state$ena_obj$rotation$adjacency.key)
-    # main_plot<-plot_ly()
-    # main_plot <- plot_network(main_plot,
-    #                           network,
-    #                           legend.include.edges = F,
-    #                           x_axis=input$x,
-    #                           y_axis=input$y,
-    #                           z_axis=input$z,
-    #                           line_width = input$line_width)
-    # main_plot
+   
   })
   
   observeEvent(event_data(event = "plotly_relayout",source='plot_correlation'),{

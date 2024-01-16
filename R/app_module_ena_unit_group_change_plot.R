@@ -70,6 +70,7 @@ ena_unit_group_change_plot_output <- function(input,output,session,
         mplot <- add_trace(mplot, data = my_nodes, x = x_axis(), y = y_axis(), z = z_axis(),
                            type = 'scatter3d', mode = "markers", name = "Codes",
                            marker = list(
+                             color ='rgb(77,77,77)',
                              size = abs(my_nodes$weight),
                              line = list(
                                width = 0

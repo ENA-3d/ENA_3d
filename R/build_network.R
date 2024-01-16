@@ -9,7 +9,7 @@ build_network = function(node.positions,network,edge_type = "line",
                          label.offset = "middle right",
                          legend.include.edges = F,
                          scale.weights = F,
-                         colors=c('#BF382A', '#0C4B8E'),
+                         colors=c(pos='#BF382A', neg='#0C4B8E'),
                          thin.lines.in.front=T,
                          show.all.nodes = T,
                          node.size = c(3,10)){

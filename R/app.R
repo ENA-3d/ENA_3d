@@ -157,7 +157,7 @@ app_server <- function(input, output, session) {
     ena_server_state$active_tab() == 'comparison_plot'
   })
   ena_server_state$render_overall <- reactive({
-    ena_server_state$active_tab() == 'overall'
+    ena_server_state$active_tab() == 'overall_model'
   })
   ena_server_state$render_unit_group_change_plot <-reactive({
     ena_server_state$active_tab() == 'group_change'

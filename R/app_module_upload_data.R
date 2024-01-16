@@ -11,7 +11,7 @@ upload_data <- function(input,output,session,rv_data,state){
   #   # Find all Dimensions (MR1, SVD2, SVD3 ...)
   #   dims <- list()
   #   for(i in colnames(state$ena_obj$points)){
-  #     if(i %!in% colnames(state$ena_obj$meta.data)){
+  #     if(i %!in% colnames(state$ena_obj$meta.data)){ena_points_plot
   #       dims=append(dims,i)
   #     }
   #   }

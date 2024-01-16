@@ -29,7 +29,11 @@ model_two_group_comparison_ui <- function(id){
   ns <- NS(id)
   tagList(
     selectInput(ns("compare_group_1"), "Group 1",choices=list()),
+    colourpicker::colourInput(ns("comparison_group_1_color"), "Group 1 color", "#BF382A"),
+    
     selectInput(ns("compare_group_2"), "Group 2", choices=list()),
+    colourpicker::colourInput(ns("comparison_group_2_color"), "Group 2 color", "#0C4B8E"),
+    
   )
 }
 
@@ -38,19 +42,19 @@ model_overall_model_ui <- function(id){
   tagList(
     # actionButton(ns('g1'),'Group 1'),
     # actionButton(ns('g2'),'Group 1')
-    virtualSelectInput(
-      inputId = "id",
-      label = "Select:",
-      choices = list(
-        "Spring" = c("March", "April", "May"),
-        "Summer" = c("June", "July", "August"),
-        "Autumn" = c("September", "October", "November"),
-        "Winter" = c("December", "January", "February")
-      ),
-      showValueAsTags = TRUE,
-      search = TRUE,
-      multiple = TRUE
-    ),
+    # virtualSelectInput(
+    #   inputId = "id",
+    #   label = "Select:",
+    #   choices = list(
+    #     "Spring" = c("March", "April", "May"),
+    #     "Summer" = c("June", "July", "August"),
+    #     "Autumn" = c("September", "October", "November"),
+    #     "Winter" = c("December", "January", "February")
+    #   ),
+    #   showValueAsTags = TRUE,
+    #   search = TRUE,
+    #   multiple = TRUE
+    # ),
     
     uiOutput(ns('group_colors_container'))
   )

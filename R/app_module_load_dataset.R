@@ -55,7 +55,7 @@ load_ena_data <- function(input,output,session,file_path,rv_data,state){
       )
     })
     
-    shinyjs::show("ena_points_plot")
+    # shinyjs::show("overall")
     
     # initialized(TRUE)
     rv_data$initialized<- TRUE

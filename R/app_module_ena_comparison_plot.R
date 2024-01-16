@@ -60,15 +60,18 @@ ena_comparison_plot_output <-  function(input, output, session,
       
     })
     
-    get_select_group= reactive({
-      if(data$model_tab_clicked ==TRUE){
-        input$select_group
-      }else{
-        data$ena_groups
-      }
+    # get_select_group= reactive({
+    #   if(data$model_tab_clicked ==TRUE){
+    #     input$select_group
+    #   }else{
+    #     data$ena_groups
+    #   }
+    # })%>% debounce(5000)
+    get_groups = reactive({
+      data$ena_groups
     })
     ena_lines_mean_in_groups = reactive({
-      get_mean_group_lineweights_in_groups(state$ena_obj,data$ena_groupVar[1],get_select_group())
+      get_mean_group_lineweights_in_groups(state$ena_obj,data$ena_groupVar[1],get_groups())
     })
     
     get_colors = reactive({
@@ -139,7 +142,7 @@ ena_comparison_plot_output <-  function(input, output, session,
       print(input$select_group)
       
 
-      filter_points <- my_points[which(my_points[[colname]] %in% get_select_group())]
+      filter_points <- my_points[which(my_points[[colname]] %in% get_groups())]
 
       
       print('filter_points')
@@ -225,15 +228,19 @@ ena_comparison_plot_output <-  function(input, output, session,
       #                           z_axis=input$z,
       #                           line_width = input$line_width)
       # main_plot
-      
+
+      # colors = c(pos=input$comparison_group_1_color,
+      #            input$comparison_group_2_color)
       # Generate Edges
       network <- build_network(scaled_nodes(),
                                network=network,
-                               adjacency.key=state$ena_obj$rotation$adjacency.key)
+                               adjacency.key=state$ena_obj$rotation$adjacency.key,
+                               colors=c(pos=input$comparison_group_1_color,
+                                        input$comparison_group_2_color))
 
       main_plot <- plot_network(main_plot,
                                 network,
-                                legend.include.edges = F,
+                                legend.include.edges = T,
                                 x_axis=input$x,
                                 y_axis=input$y,
                                 z_axis=input$z,
