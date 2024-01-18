@@ -25,24 +25,24 @@ R6 class.
 It is an object used to communicate data between modules.
 "
 ENA_3D_Server <- R6Class("ENA_3D_Server",
-                         public = list(
-                           active_tab = NULL,
-                           render_comparison = FALSE,
-                           render_overall = FALSE,
-                           render_unit_group_change_plot=FALSE,
-                           ena_obj=NULL,
-                           color_list = color_list,
-                           is_app_initialized = FALSE,
-                           initialize = function() {}
-                         )
+                  public = list(
+                    active_tab = NULL,
+                    render_comparison = FALSE,
+                    render_overall = FALSE,
+                    render_unit_group_change_plot=FALSE,
+                    ena_obj=NULL,
+                    color_list = color_list,
+                    is_app_initialized = FALSE,
+                    initialize = function() {}
+                  )
 )
 
 app_ui <- function(){
-  
-  fluidPage(
-    shinyjs::useShinyjs(),
-    tags$style(type="text/css",
-               "html{ font-size:0.9rem;}
+
+    fluidPage(
+      shinyjs::useShinyjs(),
+      tags$style(type="text/css",
+                 "html{ font-size:0.9rem;}
                   .recalculating {opacity: 1.0;}
                   .mysidebar .left-side .nav {--bs-nav-link-padding-x:0.2rem;font-size:13px}
                   .mysidebar .left-side {padding:3px}
@@ -63,98 +63,62 @@ app_ui <- function(){
                    .hide {
                         display:none !important;
                    }
-                   .toggle-sidebar-btn{
-                        position:absolute;
-                        transform:translate(5px,-100px);
-                        width:45px;
-                        --bs-btn-padding-x:0.1rem;
-                   }
-                   .camera-position-panel .form-group{
-                        display:flex;
-                        flex-direction:row;
-                        justify-content:center;
-                        margin-bottom:0px;
-                        align-items: center;
-                   }
-                  .camera-position-panel{
-                        display:flex;
-                        justify-content:center;
-                  }
-                  .plot-tool-bar{
-                        padding: 10px 10px 5px 10px;
-                  }
                  "
-    ),
-    # titlePanel("ENA 3D"),
-    theme = bslib::bs_theme(bootswatch = "darkly"),
-    fluidRow(
-      
-      column(3,
-       
-        style = "height:93vh;",
-
-        fluidRow(
-          h2('ENA 3D',id='ena_3d_h2'),
-        ),
+      ),
+      # titlePanel("ENA 3D"),
+      theme = bslib::bs_theme(bootswatch = "darkly"),
+      sidebarLayout(
         
-        navlistPanel(
-          widths = c(2, 10),
-          tabPanel("Data",
-                   data_upload_ui(id = "main_app")
-          ),
-          tabPanel("Model",
-                   model_ui(id = "main_app"),
-          ),
-          tabPanel("Plot Tools",
-                   plot_settings_ui(id = "main_app")
-          ),
-          tabPanel("Stats",
-                   stats_ui(id = "main_app")
-          ),
-
-        )%>% 
-          tagAppendAttributes(class= 'mysidebar'),
-        fluidRow(
-          actionButton('toggle_sidebar_btn','Hide',class='toggle-sidebar-btn'),
+        sidebarPanel(
+          style = "height:90vh;",
+          # h2('ENA 3D',),
+          actionButton('toggle_sidebar_btn','Hide Sidebar',class='toggle-sidebar-btn'),
+          navlistPanel(
+            widths = c(2, 10),
+            tabPanel("Data",
+                     data_upload_ui(id = "main_app")
+            ),
+            tabPanel("Model",
+                      model_ui(id = "main_app"),
+                     ),
+            tabPanel("Plot Tools",
+                      plot_settings_ui(id = "main_app")
+            ),
+            tabPanel("Stats",
+                     stats_ui(id = "main_app")
+            ),
+          )%>% 
+            tagAppendAttributes(class= 'mysidebar'),
           
-        )
-        
-        ),
-      column(9,
-        
-        fluidRow(
-          column(10,camera_position_panel_ui(id = "main_app"))%>% 
-            tagAppendAttributes(class= 'camera-position-panel'),
-          column(2,actionButton(NS("main_app",'fullscreen_btn'),'Full Screen'))
+          width = 3),
+        mainPanel(
+          fluidRow(
+            column(10,camera_position_panel_ui(id = "main_app")),
+            column(2,actionButton(NS("main_app",'fullscreen_btn'),'Full Screen'))
+            
+          ),
           
-        )%>%tagAppendAttributes(class= 'plot-tool-bar'),
-        
-        plot_ui(id = "main_app"),
-        
-      )%>%tagAppendAttributes(class= 'plot-container')
-    ),
-    
-    tags$script(
-      type = "text/javascript",
-      "   
-          const sidebar_hide_text = 'Hide'
-          const sidebar_show_text = 'Show'
+          plot_ui(id = "main_app"),
+          width = 9
+        )%>%tagAppendAttributes(class= 'plot-container')
+      ),   tags$script(
+        type = "text/javascript",
+        "
           const sidebar = document.getElementsByClassName('mysidebar')
-          
+  
           ch = sidebar[0].children
           left_side = ch[0]
           ch[0].classList.add('left-side')
           right_side = ch[1]
           ch[1].classList.add('right-side')
-          ch[1].classList.add('well')
-
+          
           var div = document.getElementsByClassName('mysidebar')[0];
           k = div.closest('.col-sm-3');
           $(k).addClass('big-sidebar')
           
           const plot_container = document.getElementsByClassName('plot-container')[0];
           
-          const tbtn = document.getElementsByClassName('toggle-sidebar-btn')[0];
+          tbtn = document.getElementsByClassName('toggle-sidebar-btn')[0];
           $(tbtn).on('click',function(e){
             $(left_side).toggleClass('col-sm-12')
             $(left_side).toggleClass('col-sm-2')
@@ -169,28 +133,19 @@ app_ui <- function(){
             
             sidebar_text = document.getElementsByClassName('toggle-sidebar-btn')[0].getInnerHTML()
             
-            if(sidebar_text == sidebar_show_text){
-              //document.getElementsByClassName('toggle-sidebar-btn')[0].setHTML(sidebar_hide_text)
-              $(document.getElementsByClassName('toggle-sidebar-btn')[0]).html(sidebar_hide_text)
-              $('#ena_3d_h2').html('ENA 3D')
-              
+            if(sidebar_text == 'Show'){
+              document.getElementsByClassName('toggle-sidebar-btn')[0].setHTML('Hide Sidebar')
             }else{
-              //document.getElementsByClassName('toggle-sidebar-btn')[0].setHTML(sidebar_show_text)
-              $(document.getElementsByClassName('toggle-sidebar-btn')[0]).html(sidebar_show_text)
-              $('#ena_3d_h2').html('ENA')
-              
+              document.getElementsByClassName('toggle-sidebar-btn')[0].setHTML('Show')
+
             }
-            
-            trans_x = $('.left-side').width() / 2 - 20;
-            
-            $(tbtn).css('transform',`translate(${trans_x}px,-100px)`)
           })
 
         "
+      )
+
     )
-    
-  )
-  
+
 }
 
 "

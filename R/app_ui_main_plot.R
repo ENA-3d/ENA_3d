@@ -5,9 +5,9 @@ plot_ui <- function(id) {
   # prefix all ids with a string
   ns <- NS(id)
   tagList(
-    plotlyOutput(NS(id,"ena_points_plot"),height = "80vh"),
-    plotlyOutput(NS(id,"ena_unit_group_change_plot"),height = "80vh"),
-    plotlyOutput(NS(id,"ena_overall_plot"),height = "80vh")
+    plotlyOutput(NS(id,"ena_points_plot"),height = "90vh"),
+    plotlyOutput(NS(id,"ena_unit_group_change_plot"),height = "90vh"),
+    plotlyOutput(NS(id,"ena_overall_plot"),height = "90vh")%>%fullscreen_this(click_id = ns('fullscreen_btn'))
     
   )
 }
