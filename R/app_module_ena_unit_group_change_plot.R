@@ -29,6 +29,21 @@ ena_unit_group_change_plot_output <- function(input,output,session,
     list(eye=camera_eye())
   })
   
+  add_3d_axis_based_on_user_selection = function(plot){
+    if(input$show_x_axis_arrow){
+      plot<-add_x_3d_axis(plot)
+    }
+    if(input$show_y_axis_arrow){
+      plot<-add_y_3d_axis(plot)
+    }
+    if(input$show_z_axis_arrow){
+      plot<-add_z_3d_axis(plot)
+    }
+    
+    # plot <- layout(plot,title='X-Y',scene= list(camera=list(eye=list(x=0., y=0., z=-2.5))))
+    plot
+    
+  }
   
   # make plots for all the groups and save it inside a list
   make_unit_group_change_plots <- reactive({
@@ -102,6 +117,15 @@ ena_unit_group_change_plot_output <- function(input,output,session,
         mplot <- mplot %>% layout(title = mtitle,
                                   scene = list(camera=camera)
         )
+        
+        mplot <- layout(mplot,
+                            scene = list(xaxis = list(title = input$x,showgrid=input$show_grid,zeroline=input$show_zeroline),
+                                         yaxis = list(title = input$y,showgrid=input$show_grid,zeroline=input$show_zeroline),
+                                         zaxis = list(title = input$z,showgrid=input$show_grid,zeroline=input$show_zeroline)),
+                            showlegend = TRUE)
+        
+        mplot<-add_3d_axis_based_on_user_selection(mplot)
+        
         mplot  %>% toWebGL()
         rv_data$unit_group_change_plots[[as.character(current_group)]] <- mplot
         incProgress(1/n, detail = paste("Doing part: ", i))
@@ -119,7 +143,12 @@ ena_unit_group_change_plot_output <- function(input,output,session,
     input$y
     input$z
     input$line_width
-    input$scale_factor},
+    input$scale_factor
+    input$show_grid
+    input$show_zeroline
+    input$show_x_axis_arrow
+    input$show_y_axis_arrow
+    input$show_z_axis_arrow},
     
     {
       if(rv_data$initialized && length(rv_data$unit_group_change_plots)>0){

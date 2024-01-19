@@ -14,6 +14,10 @@ plot_settings_ui <- function(id) {
           column(3,Toggle.shinyInput(ns("show_grid"), value = TRUE))
         ),
         fluidRow(
+          column(5,p('Show Zero Lines')),
+          column(3,Toggle.shinyInput(ns("show_zeroline"), value = TRUE))
+        ),
+        fluidRow(
           column(5,p('Show X-axis Arrow')),
           column(3,Toggle.shinyInput(ns("show_x_axis_arrow"), value = TRUE))
         ),
@@ -25,5 +29,6 @@ plot_settings_ui <- function(id) {
           column(5,p('Show Z-axis Arrow')),
           column(3,Toggle.shinyInput(ns("show_z_axis_arrow"), value = TRUE))
         ),
+
       )
 }

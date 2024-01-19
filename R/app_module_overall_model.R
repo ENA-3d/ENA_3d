@@ -192,9 +192,9 @@ ena_overall_plot_output <-  function(input, output, session,
     
     # Customize the layout and appearance of the combined plot
     main_plot <- layout(main_plot,
-                        scene = list(xaxis = list(title = input$x,showgrid=input$show_grid),
-                                     yaxis = list(title = input$y,showgrid=input$show_grid),
-                                     zaxis = list(title = input$z,showgrid=input$show_grid)),
+                        scene = list(xaxis = list(title = input$x,showgrid=input$show_grid,zeroline=input$show_zeroline),
+                                     yaxis = list(title = input$y,showgrid=input$show_grid,zeroline=input$show_zeroline),
+                                     zaxis = list(title = input$z,showgrid=input$show_grid,zeroline=input$show_zeroline)),
                         showlegend = TRUE)
     if(length(selected_groups) == 0){
       return(main_plot)
