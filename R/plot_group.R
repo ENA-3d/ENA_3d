@@ -253,16 +253,87 @@ ena_plot_points = function(
   }
   
   if(!is.null(box.values)) {
-    boxv = data.frame(
-      X1 = c(box.values[1,1], box.values[2,1], box.values[2,1], box.values[1,1] ,box.values[1,1]),
-      X2 = c(box.values[1,2], box.values[1,2], box.values[2,2], box.values[2,2], box.values[1,2]),
-      X3 = c(box.values[1,3], box.values[1,3], box.values[2,2], box.values[2,2], box.values[1,2])
-      
+    # boxv = data.frame(
+    #   X1 = c(box.values[1,1], box.values[2,1], box.values[2,1], box.values[1,1]),
+    #   X2 = c(box.values[1,2], box.values[1,2], box.values[2,2], box.values[2,2]),
+    # )
+    # boxv = data.frame(
+    #   X1 = c(box.values[1,1], box.values[2,1], box.values[2,1], box.values[1,1],box.values[1,1], box.values[2,1], box.values[2,1], box.values[1,1]),
+    #   X2 = c(box.values[1,2], box.values[1,2], box.values[2,2], box.values[2,2],box.values[1,2], box.values[1,2], box.values[2,2], box.values[2,2]),
+    #   X3 = c(box.values[1,3], box.values[1,3], box.values[1,3], box.values[1,3],box.values[2,3], box.values[2,3], box.values[2,3], box.values[2,3])
+    # )
+    boxv1 = data.frame(
+      X1 = c(box.values[1,1], box.values[2,1], box.values[2,1], box.values[1,1]),
+      X2 = c(box.values[1,2], box.values[1,2], box.values[2,2], box.values[2,2]),
+      X3 = c(box.values[1,3], box.values[1,3], box.values[1,3], box.values[1,3])
     )
+
     this.max = max(boxv, this.max)
     ena_plot = plotly::add_trace(
       p = ena_plot,
-      data = boxv,
+      data = boxv1,
+      type = "scatter3d",
+      x = ~X1, y = ~X2,z=~X3,
+      mode = "lines",
+      line = list(
+        width = 1,
+        color = colors[1],
+        dash = "dash"
+      ),
+      # "legendgroup" = labels[1],
+      showlegend = show.legend,
+      name = box.label
+    )
+
+    boxv2 = data.frame(
+      X1 = c(box.values[1,1], box.values[2,1], box.values[2,1], box.values[1,1]),
+      X2 = c(box.values[1,2], box.values[1,2], box.values[2,2], box.values[2,2]),
+      X3 = c(box.values[2,3], box.values[2,3], box.values[2,3], box.values[2,3])
+    )
+    ena_plot = plotly::add_trace(
+      p = ena_plot,
+      data = boxv2,
+      type = "scatter3d",
+      x = ~X1, y = ~X2,z=~X3,
+      mode = "lines",
+      line = list(
+        width = 1,
+        color = colors[1],
+        dash = "dash"
+      ),
+      # "legendgroup" = labels[1],
+      showlegend = show.legend,
+      name = box.label
+    )
+    
+    boxv3 = data.frame(
+      X1 = c(box.values[1,1], box.values[2,1], box.values[2,1], box.values[1,1],box.values[1,1]),
+      X2 = c(box.values[1,2], box.values[1,2], box.values[1,2], box.values[1,2],box.values[1,2]),
+      X3 = c(box.values[1,3], box.values[1,3], box.values[2,3], box.values[2,3],box.values[1,3])
+    )
+    ena_plot = plotly::add_trace(
+      p = ena_plot,
+      data = boxv3,
+      type = "scatter3d",
+      x = ~X1, y = ~X2,z=~X3,
+      mode = "lines",
+      line = list(
+        width = 1,
+        color = colors[1],
+        dash = "dash"
+      ),
+      # "legendgroup" = labels[1],
+      showlegend = show.legend,
+      name = box.label
+    )
+    boxv4 = data.frame(
+      X1 = c(box.values[1,1], box.values[2,1], box.values[2,1], box.values[1,1],box.values[1,1]),
+      X2 = c(box.values[2,2], box.values[2,2], box.values[2,2], box.values[2,2],box.values[2,2]),
+      X3 = c(box.values[1,3], box.values[1,3], box.values[2,3], box.values[2,3],box.values[1,3])
+    )
+    ena_plot = plotly::add_trace(
+      p = ena_plot,
+      data = boxv4,
       type = "scatter3d",
       x = ~X1, y = ~X2,z=~X3,
       mode = "lines",
