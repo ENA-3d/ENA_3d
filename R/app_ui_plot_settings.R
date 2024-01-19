@@ -9,6 +9,7 @@ plot_settings_ui <- function(id) {
         selectInput(ns("z"), "Z axis",choices=list()),
         sliderInput(ns("scale_factor"), "Scale Factor", value = 1, min = 1, max = 10),
         sliderInput(ns("line_width"), "Edge Width Factor", value = 3, min = 1, max = 10),
+        hr(),
         fluidRow(
           column(5,p('Show Grid')),
           column(3,Toggle.shinyInput(ns("show_grid"), value = TRUE))
@@ -17,6 +18,7 @@ plot_settings_ui <- function(id) {
           column(5,p('Show Zero Lines')),
           column(3,Toggle.shinyInput(ns("show_zeroline"), value = TRUE))
         ),
+        hr(),
         fluidRow(
           column(5,p('Show X-axis Arrow')),
           column(3,Toggle.shinyInput(ns("show_x_axis_arrow"), value = TRUE))
