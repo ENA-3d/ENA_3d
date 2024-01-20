@@ -1,4 +1,4 @@
-ena_plot_group <- function(
+ena_plot_group_3d <- function(
     ena_plot,
     points = NULL,
     method = "mean",
@@ -13,6 +13,9 @@ ena_plot_group <- function(
     label.font.family = 'Arial',
     show.legend = T,
     legend.name = NULL,
+    x_axis,
+    y_axis,
+    z_axis,
     ...
 ) {
   shape = match.arg(shape);
@@ -91,7 +94,7 @@ ena_plot_group <- function(
 }
 
 
-ena_plot_points = function(
+ena_plot_points_3d = function(
     ena_plot,
     
     points = NULL,    #vector of unit names or row indices
@@ -263,9 +266,9 @@ ena_plot_points = function(
     #   X3 = c(box.values[1,3], box.values[1,3], box.values[1,3], box.values[1,3],box.values[2,3], box.values[2,3], box.values[2,3], box.values[2,3])
     # )
     boxv1 = data.frame(
-      X1 = c(box.values[1,1], box.values[2,1], box.values[2,1], box.values[1,1]),
-      X2 = c(box.values[1,2], box.values[1,2], box.values[2,2], box.values[2,2]),
-      X3 = c(box.values[1,3], box.values[1,3], box.values[1,3], box.values[1,3])
+      X1 = c(box.values[1,1], box.values[2,1], box.values[2,1], box.values[1,1],box.values[1,1]),
+      X2 = c(box.values[1,2], box.values[1,2], box.values[2,2], box.values[2,2],box.values[1,2]),
+      X3 = c(box.values[1,3], box.values[1,3], box.values[1,3], box.values[1,3],box.values[1,3])
     )
 
     this.max = max(boxv, this.max)
@@ -286,9 +289,9 @@ ena_plot_points = function(
     )
 
     boxv2 = data.frame(
-      X1 = c(box.values[1,1], box.values[2,1], box.values[2,1], box.values[1,1]),
-      X2 = c(box.values[1,2], box.values[1,2], box.values[2,2], box.values[2,2]),
-      X3 = c(box.values[2,3], box.values[2,3], box.values[2,3], box.values[2,3])
+      X1 = c(box.values[1,1], box.values[2,1], box.values[2,1], box.values[1,1],box.values[1,1]),
+      X2 = c(box.values[1,2], box.values[1,2], box.values[2,2], box.values[2,2],box.values[1,2]),
+      X3 = c(box.values[2,3], box.values[2,3], box.values[2,3], box.values[2,3],box.values[2,3])
     )
     ena_plot = plotly::add_trace(
       p = ena_plot,
@@ -383,6 +386,9 @@ linesmean = as.vector(colMeans(lineweights))
 allpoints = as.matrix(set$points)
 
 plot = ena_plot_group(plot_ly(), points = first.group.points, confidence.interval = "box")
+plot<-ena_plot_group(plot, points = second.group.points, confidence.interval = "box",color='blue')
+network<-build_network(set$rotation$nodes,network=subtracted_network,adjacency.key = set$rotation$adjacency.key)
+plot<-plot_network(plot,network,line_width = 1)
 plot
 # #plots group netwroks
 plotgroup <- function(title, mean, point, color){
