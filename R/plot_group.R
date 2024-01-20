@@ -13,9 +13,9 @@ ena_plot_group_3d <- function(
     label.font.family = 'Arial',
     show.legend = T,
     legend.name = NULL,
-    x_axis,
-    y_axis,
-    z_axis,
+    x_axis='MR1',
+    y_axis='SVD2',
+    z_axis='SVD3',
     ...
 ) {
   shape = match.arg(shape);
@@ -45,12 +45,12 @@ ena_plot_group_3d <- function(
     if(is.null(method) || method == "mean") {
       if(confidence.interval != "none") {
         confidence.interval.values = matrix(
-          c(as.vector(t.test(points[,1], conf.level = 0.95)$conf.int), as.vector(t.test(points[,2], conf.level = 0.95)$conf.int),as.vector(t.test(points[,3], conf.level = 0.95)$conf.int)),
+          c(as.vector(t.test(points[,x_axis], conf.level = 0.95)$conf.int), as.vector(t.test(points[,y_axis], conf.level = 0.95)$conf.int),as.vector(t.test(points[,z_axis], conf.level = 0.95)$conf.int)),
           ncol=3
         );
       }
       if(outlier.interval != "none") {
-        outlier.interval.values = c(IQR(points[,1]), IQR(points[,2]),IQR(points[,3])) * 1.5;
+        outlier.interval.values = c(IQR(points[,x_axis]), IQR(points[,y_axis]),IQR(points[,z_axis])) * 1.5;
         outlier.interval.values = matrix(rep(outlier.interval.values, 3), ncol = 3, byrow = T) * c(-1, 1)
       }
       
@@ -72,7 +72,10 @@ ena_plot_group_3d <- function(
     }
   }
   
-  ena_plot <- ena_plot_points(
+  ena_plot$confidence.interval.values <-confidence.interval.values
+  ena_plot$outlier.interval.values <-outlier.interval.values
+  
+  ena_plot <- ena_plot_points_3d(
     ena_plot,
     points = points,
     labels = labels,
@@ -271,7 +274,7 @@ ena_plot_points_3d = function(
       X3 = c(box.values[1,3], box.values[1,3], box.values[1,3], box.values[1,3],box.values[1,3])
     )
 
-    this.max = max(boxv, this.max)
+    # this.max = max(boxv, this.max)
     ena_plot = plotly::add_trace(
       p = ena_plot,
       data = boxv1,
@@ -350,6 +353,11 @@ ena_plot_points_3d = function(
       name = box.label
     )
   }
+  ena_plot$boxv1<-boxv1
+  ena_plot$boxv2<-boxv2
+  ena_plot$boxv3<-boxv3
+  ena_plot$boxv4<-boxv4
+  
   # enaplot$axes$y$range = c()
   # enaplot$axes$y$range
   # if(this.max*1.2 > max(enaplot$axes$y$range)) {
@@ -369,35 +377,33 @@ ena_plot_points_3d = function(
   return(ena_plot);
 }
 
-#group analysis# 
-first.gruop.lineweights = as.matrix(set$line.weights$groupid$"1")
-second.group.lineweights = as.matrix(set$line.weights$groupid$"2")
-first.group.mean = as.vector(colMeans(first.gruop.lineweights))
-second.group.mean = as.vector(colMeans(second.group.lineweights))
-
-
-#points
-first.group.points = as.matrix(set$points$groupid$`1`)
-second.group.points = as.matrix(set$points$groupid$`2`)
-
-#for all groups
-lineweights = as.matrix(set$line.weights)
-linesmean = as.vector(colMeans(lineweights))
-allpoints = as.matrix(set$points)
-
-plot = ena_plot_group(plot_ly(), points = first.group.points, confidence.interval = "box")
-plot<-ena_plot_group(plot, points = second.group.points, confidence.interval = "box",color='blue')
-network<-build_network(set$rotation$nodes,network=subtracted_network,adjacency.key = set$rotation$adjacency.key)
-plot<-plot_network(plot,network,line_width = 1)
-plot
+# #group analysis# 
+# first.gruop.lineweights = as.matrix(set$line.weights$groupid$"1")
+# second.group.lineweights = as.matrix(set$line.weights$groupid$"2")
+# first.group.mean = as.vector(colMeans(first.gruop.lineweights))
+# second.group.mean = as.vector(colMeans(second.group.lineweights))
+# 
+# 
+# #points
+# first.group.points = as.matrix(set$points$groupid$`1`)
+# second.group.points = as.matrix(set$points$groupid$`2`)
+# 
+# #for all groups
+# lineweights = as.matrix(set$line.weights)
+# linesmean = as.vector(colMeans(lineweights))
+# allpoints = as.matrix(set$points)
+# 
+# plot = ena_plot_group_3d(plot_ly(), points = first.group.points, confidence.interval = "box")
+# plot<-ena_plot_group_3d(plot, points = second.group.points, confidence.interval = "box",color='blue')
+# plot
 # #plots group netwroks
-plotgroup <- function(title, mean, point, color){
-  plot = ena.plot(set, scale.to = "network", title = title)
-  plot = ena.plot.group(plot, points = point, confidence.interval = "box", colors = c(color))
-  # plot = ena.plot.points(plot, points = point, confidence.interval = "box", colors = c("blue"))
-  plot = ena.plot.network(plot, network = mean*2)
-  plot$plot
-}
+# plotgroup <- function(title, mean, point, color){
+#   plot = ena.plot(set, scale.to = "network", title = title)
+#   plot = ena.plot.group(plot, points = point, confidence.interval = "box", colors = c(color))
+#   # plot = ena.plot.points(plot, points = point, confidence.interval = "box", colors = c("blue"))
+#   plot = ena.plot.network(plot, network = mean*2)
+#   plot$plot
+# }
 # 
 # # #compare two groups
 # comparegroup <- function(title, mean, point1, point2){
