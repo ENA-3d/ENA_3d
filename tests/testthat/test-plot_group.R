@@ -23,7 +23,7 @@ test_that("confidence.interval.values are correct ", {
   expect_equal(confidence.interval.values[1,2],-0.05830259 )
   expect_equal(confidence.interval.values[2,2],0.05830259)
 
-  # confidence.interval.values in SVD2 axis
+  # confidence.interval.values in SVD3 axis
   expect_equal(confidence.interval.values[1,3],-0.04920936 )
   expect_equal(confidence.interval.values[2,3],0.04920936)
 })
@@ -43,3 +43,33 @@ test_that("Correct coordinates of the conf interval are produced", {
   expect_equal(mplot$boxv1,test_boxv1,tolerance=1e-6)
 })
 
+test_that("Confidence.interval.values are correctly produced in non-default axis setting", {
+  test_data = load('./test_data/testing_data.Rdata')
+  set <- get(test_data)
+  
+  x= 'SVD5'
+  y='SVD6'
+  z='MR1'
+  
+  first.group.points = as.matrix(set$points$condition$`1`)
+  mplot<-ena_plot_group_3d(points = first.group.points,
+                           ena_plot = plot_ly(), 
+                           confidence.interval = "box",
+                           x_axis = x,
+                           y_axis = y,
+                           z_axis = z)
+  
+  confidence.interval.values = mplot$confidence.interval.values
+
+  # confidence.interval.values in X axis
+  expect_equal(confidence.interval.values[1,1],-0.06300071)
+  expect_equal(confidence.interval.values[2,1],0.06300071)
+  
+  # confidence.interval.values in Y axis
+  expect_equal(confidence.interval.values[1,2],-0.05442957)
+  expect_equal(confidence.interval.values[2,2],0.05442957)
+  
+  #confidence.interval.values in Z axis
+  expect_equal(confidence.interval.values[1,3],0.006793768)
+  expect_equal(confidence.interval.values[2,3],0.116809038)
+})

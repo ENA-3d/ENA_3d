@@ -10,6 +10,7 @@ library(coin)
 library(shinyjs)
 library(R6)
 library(shinyfullscreen)
+library(rENA)
 
 source('app_ui_plot_settings.R')
 source('app_ui_main_plot.R')

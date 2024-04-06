@@ -1,4 +1,5 @@
 source('./app_utils.R')
+source('./plot_group.R')
 ena_comparison_plot_output <-  function(input, output, session,
                                         data,
                                         state,
@@ -20,7 +21,15 @@ ena_comparison_plot_output <-  function(input, output, session,
     z_axis <- reactive({
       tilde_var_or_null(input$z)
     })
-    
+    get_group_1_points <- reactive({
+      my_points = rENA::remove_meta_data(scaled_points())
+      
+      my_points[which(my_points[[data$ena_groupVar[1]]] %in% c(input$compare_group_1)),]
+    })
+    get_group_2_points <- reactive({
+      my_points = rENA::remove_meta_data(scaled_points())
+      my_points[which(my_points[[data$ena_groupVar[1]]] %in% c(input$compare_group_2)),]
+    })
     camera = reactive({
       pos = input$camera_position
       print(pos)
@@ -99,11 +108,19 @@ ena_comparison_plot_output <-  function(input, output, session,
       
       # plot <- layout(plot,title='X-Y',scene= list(camera=list(eye=list(x=0., y=0., z=-2.5))))
       plot
-      
-      
     }
     
+    add_mean_based_on_user_selection = function(plot){
+      if(input$compare_group_1_show_mean){
+        plot <- ena_plot_group_3d(plot,points = get_group_1_points(),colors=input$comparison_group_1_color)
+      }
+      if(input$compare_group_2_show_mean){
+        plot <- ena_plot_group_3d(plot,points = get_group_2_points(),colors=input$comparison_group_2_color)
+      }
+      return(plot)
+    }
     generate_plot = reactive({
+      
       # req(initialized(),cancelOutput = TRUE)
       main_plot <- plot_ly(source='plot_correlation')
       print('generate plot')
@@ -258,7 +275,9 @@ ena_comparison_plot_output <-  function(input, output, session,
       comparison_plot <- generate_plot()
 
       comparison_plot <- add_3d_axis_based_on_user_selection(comparison_plot)
-
+      browser()
+      
+      comparison_plot <- add_mean_based_on_user_selection(comparison_plot)
       print('new plot')
       event_register(comparison_plot, 'plotly_relayout')
       # click_data <- event_data("plotly_click", source = "ena_points_plot")

@@ -30,9 +30,11 @@ model_two_group_comparison_ui <- function(id){
   tagList(
     selectInput(ns("compare_group_1"), "Group 1",choices=list()),
     colourpicker::colourInput(ns("comparison_group_1_color"), "Group 1 color", "#BF382A"),
-    
+    Toggle.shinyInput(ns("compare_group_1_show_mean"),value = TRUE),
+                      
     selectInput(ns("compare_group_2"), "Group 2", choices=list()),
     colourpicker::colourInput(ns("comparison_group_2_color"), "Group 2 color", "#0C4B8E"),
+    Toggle.shinyInput(ns("compare_group_2_show_mean"),value = TRUE),
     
   )
 }

@@ -16,7 +16,6 @@ ena_plot_group_3d <- function(
     x_axis='MR1',
     y_axis='SVD2',
     z_axis='SVD3',
-    group_name=NULL,
     ...
 ) {
   shape = match.arg(shape);
@@ -72,8 +71,11 @@ ena_plot_group_3d <- function(
       attr(ena_plot, "means") <- length(attr(ena_plot, "means")) + 1
     }
   }
-  #print(points)
-  ena_plot <- ena_plot_points(
+  
+  ena_plot$confidence.interval.values <-confidence.interval.values
+  ena_plot$outlier.interval.values <-outlier.interval.values
+  
+  ena_plot <- ena_plot_points_3d(
     ena_plot,
     points = points,
     labels = labels,
@@ -89,21 +91,13 @@ ena_plot_group_3d <- function(
     label.font.family = label.font.family,
     show.legend = show.legend,
     legend.name = legend.name,
-    x_axis=x_axis,
-    y_axis=y_axis,
-    z_axis=z_axis,
-    group_name = group_name,
     ...
   )
-  
-  ena_plot$confidence.interval.values <-confidence.interval.values
-  ena_plot$outlier.interval.values <-outlier.interval.values
-  
   return(ena_plot)
 }
 
 
-ena_plot_points = function(
+ena_plot_points_3d = function(
     ena_plot,
     
     points = NULL,    #vector of unit names or row indices
@@ -127,10 +121,6 @@ ena_plot_points = function(
     show.legend = T,
     legend.name = "Points",
     texts = NULL,
-    x_axis='MR1',
-    y_axis='SVD2',
-    z_axis='SVD3',
-    group_name=NULL,
     ...
 ) {
   ###
@@ -147,15 +137,11 @@ ena_plot_points = function(
     stop("Must provide points to plot.")
     # points = enaplot$enaset$points
   }
-  #print(points)
-  #save the colnames
-  cnames = row.names(as.data.frame(points))
+  
   if(is(points, "numeric")){
     points = matrix(points);
     dim(points) = c(1,nrow(points))
     points.layout = data.table::data.table(points);
-    #reset the column names
-    colnames(points.layout) <-cnames
   }
   else if (is.data.table(points)) {
     # points.layout = remove_meta_data(points)
@@ -240,48 +226,35 @@ ena_plot_points = function(
   ###
   # Plot
   #####
-  #print('points.layout')
-  #print(points.layout)
   points.matrix = rENA::remove_meta_data(points.layout)
   colnames(points.matrix) = paste0("X", rep(1:ncol(points.matrix)));
-  #print('points.matrix')
-  #print(points.matrix)
   this.max = max(points.matrix);
   for(m in 1:nrow(points.matrix)) {
-    #print('m')
-    #print(points.matrix[m,])
     ena_plot = plotly::add_trace(
       p = ena_plot,
       data = points.matrix[m,],
       type ="scatter3d",
-      x = ~X1,
-      y = ~X2,
-      z = ~X3,
-      #x = as.formula(paste("~", x_axis)),
-      #y = as.formula(paste("~", y_axis)),
-      #z=as.formula(paste("~", z_axis)),
+      x = ~X1, y = ~X2,z=~X3,
       mode = "markers+text",
       marker = list(
-        #symbol = shape[m],
-        symbol = 'square',
+        symbol = shape[m],
         color = colors[m],
-        size = 5
+        size = point.size[m]
       ),
       error_x = error$x, error_y = error$y,
       showlegend = show.legend,
       # legendgroup = label.group,
       # legendgroup = ifelse(!is.null(box.label), labels[1], NULL),
       name = labels[m],
-      text = group_name,#texts[m] #labels[m],
+      text = texts[m], #labels[m],
       textfont = list(
         family = label.font.family,
         size = label.font.size,
         color = label.font.color
       ),
       legendgroup = legend.name,
-      textposition = label.offset[m]
-      #hoverinfo = paste0('mean',"x+y+z"),
-      #hovertemplate = 'Mean: </br></br>x: %{x:.5f} </br>y: %{y:.5f}</br>z: %{z:.5f}'
+      textposition = label.offset[m],
+      hoverinfo = "x+y+name"
     )
   }
   
@@ -300,8 +273,8 @@ ena_plot_points = function(
       X2 = c(box.values[1,2], box.values[1,2], box.values[2,2], box.values[2,2],box.values[1,2]),
       X3 = c(box.values[1,3], box.values[1,3], box.values[1,3], box.values[1,3],box.values[1,3])
     )
-    
-    this.max = max(boxv1, this.max)
+
+    # this.max = max(boxv, this.max)
     ena_plot = plotly::add_trace(
       p = ena_plot,
       data = boxv1,
@@ -317,7 +290,7 @@ ena_plot_points = function(
       showlegend = show.legend,
       name = box.label
     )
-    
+
     boxv2 = data.frame(
       X1 = c(box.values[1,1], box.values[2,1], box.values[2,1], box.values[1,1],box.values[1,1]),
       X2 = c(box.values[1,2], box.values[1,2], box.values[2,2], box.values[2,2],box.values[1,2]),
@@ -380,6 +353,11 @@ ena_plot_points = function(
       name = box.label
     )
   }
+  ena_plot$boxv1<-boxv1
+  ena_plot$boxv2<-boxv2
+  ena_plot$boxv3<-boxv3
+  ena_plot$boxv4<-boxv4
+  
   # enaplot$axes$y$range = c()
   # enaplot$axes$y$range
   # if(this.max*1.2 > max(enaplot$axes$y$range)) {
@@ -396,11 +374,50 @@ ena_plot_points = function(
   # END: Plot
   ###
   
-  ena_plot$boxv1<-boxv1
-  ena_plot$boxv2<-boxv2
-  ena_plot$boxv3<-boxv3
-  ena_plot$boxv4<-boxv4
-  
-  #print(box.values)
   return(ena_plot);
 }
+
+# #group analysis# 
+# first.gruop.lineweights = as.matrix(set$line.weights$groupid$"1")
+# second.group.lineweights = as.matrix(set$line.weights$groupid$"2")
+# first.group.mean = as.vector(colMeans(first.gruop.lineweights))
+# second.group.mean = as.vector(colMeans(second.group.lineweights))
+# 
+# 
+# #points
+# first.group.points = as.matrix(set$points$groupid$`1`)
+# second.group.points = as.matrix(set$points$groupid$`2`)
+# 
+# #for all groups
+# lineweights = as.matrix(set$line.weights)
+# linesmean = as.vector(colMeans(lineweights))
+# allpoints = as.matrix(set$points)
+# 
+# plot = ena_plot_group_3d(plot_ly(), points = first.group.points, confidence.interval = "box")
+# plot<-ena_plot_group_3d(plot, points = second.group.points, confidence.interval = "box",color='blue')
+# plot
+# #plots group netwroks
+# plotgroup <- function(title, mean, point, color){
+#   plot = ena.plot(set, scale.to = "network", title = title)
+#   plot = ena.plot.group(plot, points = point, confidence.interval = "box", colors = c(color))
+#   # plot = ena.plot.points(plot, points = point, confidence.interval = "box", colors = c("blue"))
+#   plot = ena.plot.network(plot, network = mean*2)
+#   plot$plot
+# }
+# 
+# # #compare two groups
+# comparegroup <- function(title, mean, point1, point2){
+#   plot = ena.plot(set, scale.to = "network", title = title)
+#   plot = ena.plot.group(plot, points = point1, confidence.interval = "box", colors = c("blue"))
+#   # plot = ena.plot.points(plot, points = point1, confidence.interval = "box", colors = c("blue"))
+#   plot = ena.plot.group(plot, points = point2, confidence.interval = "box", colors = c("red"))
+#   # plot = ena.plot.points(plot, points = point2, confidence.interval = "box", colors = c("red"))
+#   plot = ena.plot.network(plot, network = mean*2)
+#   plot$plot
+# }
+# 
+# comparegroup("Group 1 & 2",first.group.mean - second.group.mean, first.group.points, second.group.points)
+# # # 
+# mplot <- plotgroup("Group 1",first.group.mean, first.group.points, color = "blue")
+# mplot <- ena_plot_group(mplot, first.group.points, confidence.interval = "box")
+# mplot

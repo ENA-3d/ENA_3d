@@ -77,8 +77,8 @@ ena_app_server <- function(id,state,config) {
         if(is.null(rv$ena_groupVar)){
           ena_points()
         }
-        print(paste0('rv$ena_groupVar:',rv$ena_groupVar[1]))
-        print(paste0('rv$ena_groups:',rv$ena_groups))
+        #print(paste0('rv$ena_groupVar:',rv$ena_groupVar[1]))
+        #print(paste0('rv$ena_groups:',rv$ena_groups))
         
         my_points = ena_points()
         print(my_points)
