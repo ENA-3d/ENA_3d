@@ -7,7 +7,9 @@ dependencies_list = c('shiny',
                       'rENA',
                       'coin',
                       'shinyfullscreen',
-                      'shinytest'
+                      'shinytest',
+                      'shiny.fluent',
+                      'colourpicker'
                       )
 
 for(i in 1:length(dependencies_list)){

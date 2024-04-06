@@ -18,19 +18,7 @@ ena_overall_plot_output <-  function(input, output, session,
   z_axis <- reactive({
     tilde_var_or_null(input$z)
   })
-  camera_eye<- reactive({
-    pos = input$camera_position
-    print(pos)
-    if(pos =='default'){
-      list(x=1.25, y=1.25, z=1.25)
-    }else if(pos =='x_y'){
-      list(x=0, y=0, z=2.5)
-    }else if(pos == 'x_z'){
-      list(x=0., y=-2.5, z=0.)
-    }else if(pos =='y_z'){
-      list(x=-2.5, y=0., z=0.)
-    }
-  })
+
   camera = reactive({
     pos = input$camera_position
     print(pos)
