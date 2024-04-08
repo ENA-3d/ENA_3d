@@ -7,7 +7,7 @@ model_ui <- function(id) {
 
     tabsetPanel(
       id = ns("mytabs"),
-      tabPanel("Model",value = "overall_model", model_overall_model_ui(id)),
+      tabPanel("Overall",value = "overall_model", model_overall_model_ui(id)),
       
       tabPanel("Comparison",value = "comparison_plot", model_two_group_comparison_ui(id)),
       tabPanel("Change",value = "group_change", model_group_change_ui(id)),
