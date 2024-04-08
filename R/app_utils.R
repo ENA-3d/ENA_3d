@@ -30,7 +30,9 @@ get_ena_group_var<- function(ena_obj){
   }
   return(ena_obj$`_function.params`$units.by)
 }
-
+get_points_with_group <-function(points,groupVar,group_name){
+  points[which(points[[groupVar]] %in% c(group_name)),]
+}
 get_camera_position <- function(plot) {
 	  # This function takes a plotly 3d plot object and returns its current camera position.
 	  #
@@ -50,6 +52,9 @@ get_camera_position <- function(plot) {
     cat("Error: ", e$message, "\n")
     return(NULL)
   })
+}
+drop_data_frame_columns <- function(DF,drops){
+  DF[ , !(names(DF) %in% drops)]
 }
 tilde_var_or_null = function(var_name){
   result <- NULL
@@ -196,3 +201,33 @@ add_z_3d_axis<-function(plot){
   )
   plot
 }
+
+set_default_axis_range <- function(plot){
+  axx <- list(
+    nticks = 4,
+    range = c(-10,10)
+  )
+  
+  axy <- list(
+    nticks = 4,
+    range = c(-10,10)
+  )
+  
+  axz <- list(
+    nticks = 4,
+    range = c(-10,10)
+  )
+  
+  plot <- plot %>%
+    layout(
+      scene = list(
+        aspectmode = "cube",
+        camera = list(eye = list(x=0, y=0, z=2.5),up=list(x=0,y=1,z=0)),
+        xaxis=axx,yaxis=axy,zaxis=axz
+      )
+    )
+  return(plot)
+}
+
+
+

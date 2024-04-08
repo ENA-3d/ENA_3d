@@ -46,6 +46,7 @@ ena_unit_group_change_plot_output <- function(input,output,session,
     # list(eye=camera_eye(),up=list(x=0,y=1,z=0))
   })
   
+  
   add_3d_axis_based_on_user_selection = function(plot){
     if(input$show_x_axis_arrow){
       plot<-add_x_3d_axis(plot)
@@ -199,6 +200,7 @@ ena_unit_group_change_plot_output <- function(input,output,session,
       p<- rv_data$unit_group_change_plots[[as.character(input$unit_change)]]
 
     }
+    
     p <- layout(p,title=input$camera_position,scene= list(camera=camera()))
     p
     

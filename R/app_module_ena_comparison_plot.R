@@ -95,6 +95,11 @@ ena_comparison_plot_output <-  function(input, output, session,
         c()
       }
     })
+    remove_meta_data_and_group_var <- function(ena_points){
+      ena_points<-rENA::remove_meta_data(ena_points)
+      ena_points<- drop_data_frame_columns(ena_points,data$ena_groupVar)
+      ena_points;
+    }
     add_3d_axis_based_on_user_selection = function(plot){
       if(input$show_x_axis_arrow){
         plot<-add_x_3d_axis(plot)
@@ -110,12 +115,44 @@ ena_comparison_plot_output <-  function(input, output, session,
       plot
     }
     
-    add_mean_based_on_user_selection = function(plot){
+    add_mean_based_on_user_selection <- function(plot){
+      #browser()
+      if(input$compare_group_1_show_confidence_interval){
+        group_1_conf = 'box'
+      }else{
+        group_1_conf = 'none'
+      }
+      
+      if(input$compare_group_2_show_confidence_interval){
+        group_2_conf = 'box'
+      }else{
+        group_2_conf = 'none'
+      }
+      
       if(input$compare_group_1_show_mean){
-        plot <- ena_plot_group_3d(plot,points = get_group_1_points(),colors=input$comparison_group_1_color)
+        #plot <- ena_plot_group_3d(plot,points = get_group_1_points(),colors=input$comparison_group_1_color)
+        points <- get_points_with_group(scaled_points(),data$ena_groupVar[1],input$compare_group_1)
+        points <-remove_meta_data(points)
+        plot <- ena_plot_group_3d(plot,points = points,
+                                  colors=input$comparison_group_1_color,
+                                  confidence.interval=group_1_conf,
+                                  x_axis = input$x,
+                                  y_axis = input$y,
+                                  z_axis = input$z)
+        
       }
       if(input$compare_group_2_show_mean){
-        plot <- ena_plot_group_3d(plot,points = get_group_2_points(),colors=input$comparison_group_2_color)
+        #plot <- ena_plot_group_3d(plot,points = get_group_2_points(),colors=input$comparison_group_2_color)
+        points = get_points_with_group(scaled_points(),data$ena_groupVar[1],input$compare_group_2)
+        points <-remove_meta_data(points)
+        plot <- ena_plot_group_3d(plot,
+                                  points = points,
+                                  colors=input$comparison_group_2_color,
+                                  confidence.interval=group_2_conf,
+                                  x_axis = input$x,
+                                  y_axis = input$y,
+                                  z_axis = input$z)
+        
       }
       return(plot)
     }
@@ -275,9 +312,9 @@ ena_comparison_plot_output <-  function(input, output, session,
       comparison_plot <- generate_plot()
 
       comparison_plot <- add_3d_axis_based_on_user_selection(comparison_plot)
-      browser()
+      #browser()
       
-      comparison_plot <- add_mean_based_on_user_selection(comparison_plot)
+      #comparison_plot <- add_mean_based_on_user_selection(comparison_plot)
       print('new plot')
       event_register(comparison_plot, 'plotly_relayout')
       # click_data <- event_data("plotly_click", source = "ena_points_plot")
@@ -288,7 +325,9 @@ ena_comparison_plot_output <-  function(input, output, session,
       #   # data[idx, "col"] <- "red"
       # }
 
-
+      comparison_plot <- set_default_axis_range(comparison_plot)
+      comparison_plot <- layout(comparison_plot,title=input$camera_position,scene= list(camera=camera()))
+      
       comparison_plot
       
     })

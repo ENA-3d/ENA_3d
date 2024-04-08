@@ -279,9 +279,9 @@ ena_plot_points = function(
         color = label.font.color
       ),
       legendgroup = legend.name,
-      textposition = label.offset[m]
+      textposition = label.offset[m],
       #hoverinfo = paste0('mean',"x+y+z"),
-      #hovertemplate = 'Mean: </br></br>x: %{x:.5f} </br>y: %{y:.5f}</br>z: %{z:.5f}'
+      hovertemplate = 'Mean: </br></br>x: %{x:.5f} </br>y: %{y:.5f}</br>z: %{z:.5f}'
     )
   }
   
@@ -379,6 +379,10 @@ ena_plot_points = function(
       showlegend = show.legend,
       name = box.label
     )
+    ena_plot$boxv1<-boxv1
+    ena_plot$boxv2<-boxv2
+    ena_plot$boxv3<-boxv3
+    ena_plot$boxv4<-boxv4
   }
   # enaplot$axes$y$range = c()
   # enaplot$axes$y$range
@@ -395,12 +399,7 @@ ena_plot_points = function(
   #####
   # END: Plot
   ###
-  
-  ena_plot$boxv1<-boxv1
-  ena_plot$boxv2<-boxv2
-  ena_plot$boxv3<-boxv3
-  ena_plot$boxv4<-boxv4
-  
+
   #print(box.values)
   return(ena_plot);
 }
