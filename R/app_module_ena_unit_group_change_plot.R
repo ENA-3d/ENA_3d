@@ -46,7 +46,110 @@ ena_unit_group_change_plot_output <- function(input,output,session,
     # list(eye=camera_eye(),up=list(x=0,y=1,z=0))
   })
   
-  
+  add_mean_to_plot<- function(plot,all_points,group_name,conf_int,color='red') {
+    points <- get_points_with_group(all_points,rv_data$ena_groupVar[1],group_name)
+    points <-remove_meta_data(points)
+    plot <- ena_plot_group_3d(plot,points = points,
+                              colors=color,
+                              confidence.interval=conf_int,
+                              x_axis = input$x,
+                              y_axis = input$y,
+                              z_axis = input$z)
+    return(plot)
+  }
+  validate_confidence_interval <- function(points,x,y,z){
+    return(!(sd(points[,x])==0 || sd(points[,y])==0||sd(points[,z])==0 ||
+       is.na(sd(points[,x])) || is.na(sd(points[,y]))||is.na(sd(points[,z]))))
+  }
+  add_mean_to_plot <- function(plot,
+                               all_points,
+                               group_name,
+                               group_var,
+                               show_mean,
+                               show_conf_int,
+                               color){
+    #browser()
+    conf <-'none'
+    if(show_conf_int){
+      conf <- 'box'
+    }
+    
+    if(show_mean){
+      points <- get_points_with_group(all_points,group_var,group_name)
+      points <-remove_meta_data(points)
+      
+      means = sapply(points,'mean')
+      #check confidence interval
+      #browser()
+      # if(sd(points[,input$x])==0 || sd(points[,input$y])==0||sd(points[,input$z])==0 ||
+      #    is.na(sd(points[,input$x])) || is.na(sd(points[,input$y]))||is.na(sd(points[,input$z]))){
+      #   conf <- 'none'
+      # }
+      if(!validate_confidence_interval(points,input$x,input$y,input$z)){
+        conf <- 'none'
+      }
+      plot <- ena_plot_group_3d(plot,points = points,
+                                colors=color,
+                                confidence.interval=conf,
+                                x_axis = input$x,
+                                y_axis = input$y,
+                                z_axis = input$z)
+    }
+   
+    return(plot)
+  }
+  scale_to <- function(plot,scale.to,enaset,axispadding=1.2){
+    if (is.list(scale.to)) {
+      max.axis = max(abs(as.matrix(enaset$points)))*axispadding
+      if(is.null(scale.to$x)) {
+        axis.range.x = c(-max.axis, max.axis)
+      }
+      else {
+        axis.range.x = scale.to$x
+      }
+      if(is.null(scale.to$y)) {
+        axis.range.y = c(-max.axis, max.axis)
+      }
+      else {
+        axis.range.y = scale.to$y
+      }
+      if(is.null(scale.to$z)) {
+        axis.range.z = c(-max.axis, max.axis)
+      }
+      else {
+        axis.range.z = scale.to$z
+      }
+    }
+    else {
+      if(is.character(scale.to) && scale.to == "points") {
+        max.axis = max(abs(as.matrix(enaset$points)))*axispadding
+      }
+      else if (is.numeric(scale.to)) {
+        max.axis = tail(scale.to, 1)
+      }
+      else {
+        max.axis = max(abs(as.matrix(enaset$rotation$nodes)))*axispadding;
+      }
+      axis.range.x = axis.range.y = axis.range.z= c(-max.axis, max.axis)
+    }
+    #browser()
+    plot <- plot %>% layout(
+        scene = list(
+          xaxis=list(range = axis.range.x),
+          yaxis=list(range = axis.range.y),
+          zaxis=list(range = axis.range.z)
+        )
+      )
+    plot <- plot %>% layout(
+      scene = list(
+        xaxis=list(range = c(-5,5)),
+        yaxis=list(range = c(-5,5)),
+        zaxis=list(range = c(-5,5))
+      )
+    )
+    
+    return(plot)
+  }
   add_3d_axis_based_on_user_selection = function(plot){
     if(input$show_x_axis_arrow){
       plot<-add_x_3d_axis(plot)
@@ -85,7 +188,7 @@ ena_unit_group_change_plot_output <- function(input,output,session,
         eye=list(x=1.5, y=1.5, z=1.5)
       )
       n=length(rv_data$ena_groups)
-      my_nodes <- scaled_nodes
+      my_nodes <- scaled_nodes()
       
       t <- list(
         family = "sans serif",
@@ -115,7 +218,7 @@ ena_unit_group_change_plot_output <- function(input,output,session,
                            textfont=t,
                            textposition = "top right")
         
-        c_network <- build_network(scaled_nodes,
+        c_network <- build_network(scaled_nodes(),
                                    network=get_mean_group_lineweights(state$ena_obj,rv_data$ena_groupVar[1],current_group),
                                    adjacency.key=state$ena_obj$rotation$adjacency.key)
         # print('start plotting network')
@@ -141,8 +244,16 @@ ena_unit_group_change_plot_output <- function(input,output,session,
                                          yaxis = list(title = input$y,showgrid=input$show_grid,zeroline=input$show_zeroline),
                                          zaxis = list(title = input$z,showgrid=input$show_grid,zeroline=input$show_zeroline)),
                             showlegend = TRUE)
-        
         mplot<-add_3d_axis_based_on_user_selection(mplot)
+        mplot<-add_mean_to_plot(mplot,
+                                all_points = scaled_points(),
+                                group_name = current_group,
+                                group_var = rv_data$ena_groupVar[1],
+                                show_mean = input$group_change_show_mean,
+                                show_conf_int = input$group_change_show_confidence_interval,
+                                color='red')
+        mplot <- scale_to(mplot,scale.to = 'network',state$ena_obj)
+        
         
         mplot  %>% toWebGL()
         rv_data$unit_group_change_plots[[as.character(current_group)]] <- mplot
@@ -150,6 +261,7 @@ ena_unit_group_change_plot_output <- function(input,output,session,
         
       }
     })
+    #browser()
     rv_data$unit_group_change_plots
   })
   
@@ -166,7 +278,9 @@ ena_unit_group_change_plot_output <- function(input,output,session,
     input$show_zeroline
     input$show_x_axis_arrow
     input$show_y_axis_arrow
-    input$show_z_axis_arrow},
+    input$show_z_axis_arrow
+    input$group_change_show_mean
+    input$group_change_show_confidence_interval},
     
     {
       if(rv_data$initialized && length(rv_data$unit_group_change_plots)>0){

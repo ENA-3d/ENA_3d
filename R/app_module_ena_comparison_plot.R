@@ -314,7 +314,7 @@ ena_comparison_plot_output <-  function(input, output, session,
       comparison_plot <- add_3d_axis_based_on_user_selection(comparison_plot)
       #browser()
       
-      #comparison_plot <- add_mean_based_on_user_selection(comparison_plot)
+      comparison_plot <- add_mean_based_on_user_selection(comparison_plot)
       print('new plot')
       event_register(comparison_plot, 'plotly_relayout')
       # click_data <- event_data("plotly_click", source = "ena_points_plot")
@@ -339,5 +339,6 @@ ena_comparison_plot_output <-  function(input, output, session,
         print(clicked)
       }
     })
-
+    
+    
 }

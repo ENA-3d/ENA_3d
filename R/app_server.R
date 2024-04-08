@@ -80,15 +80,15 @@ ena_app_server <- function(id,state,config) {
         }
         #print(paste0('rv$ena_groupVar:',rv$ena_groupVar[1]))
         #print(paste0('rv$ena_groups:',rv$ena_groups))
-
+        #browser()
         my_points = state$ena_obj$points
         #my_points = ena_points()
         
         #print(my_points)
-
+        #my_points[,rv$ena_groupVar[1]]<-as.character(as.data.frame(my_points)[,rv$ena_groupVar[1]])
         #my_points[,rv$ena_groupVar[1]] <- as.character(my_points[,rv$ena_groupVar[1]])
         #my_points[,rv$ena_groupVar[1]] <- as.ena.metadata(my_points[,rv$ena_groupVar[1]])
-        
+        my_points[,rv$ena_groupVar[1]]
         for(i in colnames(state$ena_obj$points)){
           if(i %!in% colnames(state$ena_obj$meta.data)){
             my_points[[i]] <- my_points[[i]]*scale_factor()
@@ -180,8 +180,8 @@ ena_app_server <- function(id,state,config) {
       ena_unit_group_change_plot_output(input,output,session,
                                         rv,
                                         state,
-                                        scaled_points(),
-                                        scaled_nodes()
+                                        scaled_points,
+                                        scaled_nodes
                                         )
       
       ena_overall_plot_output(input, output, session,

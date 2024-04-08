@@ -99,6 +99,7 @@ ena_overall_plot_output <-  function(input, output, session,
     
   }
   generate_plot = reactive({
+    
     # req(initialized(),cancelOutput = TRUE)
     main_plot <- plot_ly()
     print('generate plot')
@@ -117,9 +118,9 @@ ena_overall_plot_output <-  function(input, output, session,
     
     print('render overall')
     # Create an empty plot
-    
+    #browser()
     # Add the first trace (from points_plot)
-    my_points <- as.data.table(scaled_points())
+    my_points <- scaled_points()
     colname = data$ena_groupVar[1]
     
     # Fix the bug of not showing edges when the dataset is loaded and the user hasn't open the model page      
@@ -128,7 +129,7 @@ ena_overall_plot_output <-  function(input, output, session,
     
     selected_groups <- get_select_group()
     filter_points <- my_points[which(my_points[[colname]] %in% selected_groups)]
-    
+    filter_points[,colname]<-as.character(as.data.frame(filter_points)[,colname])
     
     print('filter_points')
     print(filter_points)

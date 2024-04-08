@@ -80,10 +80,19 @@ model_overall_model_ui <- function(id){
 model_group_change_ui <- function(id){
   ns <- NS(id)
   tagList(
-    selectInput(ns("group_change_var"), "Select Unit",choices=list()),
+    selectInput(ns("group_change_var"), "Select Group Variable",choices=list()),
     # sliderInput(ns("main_group_change"), "Unit Change", value = 1, min = 1, max = 10)
     sliderTextInput(inputId = ns("unit_change"),
                     label = "Units",
-                    choices = c(1,5,10,15,20,25,30))
+                    choices = c(1,5,10,15,20,25,30)),
+    hr(),
+    fixedRow(
+      column(9,"Show Mean:"),
+      column(3,Toggle.shinyInput(ns("group_change_show_mean"),value = TRUE))
+    ),
+    fixedRow(
+      column(9,"Show Confidence Interval:"),
+      column(3,Toggle.shinyInput(ns("group_change_show_confidence_interval"),value = TRUE))
+    ),
   )
 }
