@@ -332,13 +332,13 @@ ena_comparison_plot_output <-  function(input, output, session,
       
     })
     
-    observeEvent(event_data(event = "plotly_relayout",source='plot_correlation'),{
-      clicked <- event_data(event = "plotly_relayout",
-                            source = "plot_correlation")
-      if (!is.null(clicked)) {
-        print(clicked)
-      }
-    })
+    # observeEvent(event_data(event = "plotly_relayout",source='plot_correlation'),{
+    #   clicked <- event_data(event = "plotly_relayout",
+    #                         source = "plot_correlation")
+    #   if (!is.null(clicked)) {
+    #     print(clicked)
+    #   }
+    # })
     
     
 }

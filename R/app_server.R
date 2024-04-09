@@ -41,7 +41,9 @@ ena_app_server <- function(id,state,config) {
                            initialized=FALSE,
                            model_tab_clicked=FALSE,
                            comparison_plot=list(),
-                           reactiveFunctions = list())
+                           reactiveFunctions = list(),
+                           group_colors=list(),
+                           group_selectors=list())
 
 
 
@@ -162,7 +164,10 @@ ena_app_server <- function(id,state,config) {
         # list(eye=camera_eye(),up=list(x=0,y=1,z=0))
       })
       
-
+      # rv$reactiveFunctions['get_group_color']<-function(group_colors,group_col,group_name){
+      #   group_colors[which(group_colors[,group_col]==group_name)]
+      # }
+      
       "
         The plot in the model -> comparsion tab
       "
@@ -242,7 +247,67 @@ ena_app_server <- function(id,state,config) {
           rv$model_tab_clicked<-TRUE
         }
       })
+      
+      observeEvent({rv$group_selectors},{
+        if(length(rv$group_selectors)!=0){
+          
+          list_of_selectors<-list()
+          n<-length(rv$group_selectors)
+          for(ii in 1:n) {
 
+              local({
+                i <- ii
+                group_selector <- rv$group_selectors[[i]]
+                print(group_selector)
+                color_selector_id <-group_selector[['color_selector_id']]
+                group_name = group_selector[['group_name']]
+                print(input[[color_selector_id]])
+                observeEvent(eventExpr = input[[color_selector_id]],
+                             handlerExpr = {
+                               print(sprintf("You clicked btn number %s",color_selector_id))
+                               print(group_name)
+                               if(!is.null(input[[color_selector_id]])){
+                                 rv$group_colors[which(rv$group_colors[,'group']==group_name)]<-input[[color_selector_id]]
+                                 print(rv$group_colors)
+                               }
+                               #rv$group_colors[which(group_colors[,group_col]==group_name)]
+                               #input[[]]
+                               })
+              })
+          }
+          # print('listen to this')
+          # print(list_of_selectors)
+          # list_of_selectors
+        }
+      })
+      # observeEvent(
+      #   eventExpr = {
+      #   
+      #     if(length(rv$group_selectors)==0){
+      #       input$x
+      #     }else{
+      #       list_of_selectors<-list()
+      #       for(group_selector in rv$group_selectors) {
+      #         print(group_selector)
+      #         color_selector_id <-group_selector[['color_selector_id']]
+      #         list_of_selectors <- append(list_of_selectors, input[[color_selector_id]])
+      #       }
+      #       print('listen to this')
+      #       print(list_of_selectors)
+      #       list_of_selectors
+      #     }
+      #     #input$x
+      #   },
+      #   handlerExpr = { #Replace with listen to any input with id starting with "button_"
+      #     #req(input$changed)
+      #     print('click')
+      #     #browser()
+      #     #print(input$changed)
+      #     #print(paste0("Inside observer: ",input[[input$changed]]," was fired"))
+      #   },
+      #   ignoreInit = T
+      # )
+    
       
     }
   )

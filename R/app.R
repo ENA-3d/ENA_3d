@@ -11,7 +11,7 @@ library(shinyjs)
 library(R6)
 library(shinyfullscreen)
 library(rENA)
-
+library(colourpicker)
 source('app_ui_plot_settings.R')
 source('app_ui_main_plot.R')
 source('app_ui_model_tab.R')
@@ -43,9 +43,18 @@ ENA_3D_Server <- R6Class("ENA_3D_Server",
 )
 
 app_ui <- function(){
-  
+
   fluidPage(
     shinyjs::useShinyjs(),
+    tags$head(
+      tags$script(
+        "$(document).on('shiny:inputchanged', function(event) {
+          if (event.name != 'changed') {
+            Shiny.setInputValue('changed', event.name);
+          }
+        });"
+      )
+    ),
     tags$style(type="text/css",
                "html{ font-size:0.9rem;}
                   .recalculating {opacity: 1.0;}
@@ -190,7 +199,7 @@ app_ui <- function(){
             
             $(tbtn).css('transform',`translate(${trans_x}px,-100px)`)
           })
-
+          
         "
     )
     

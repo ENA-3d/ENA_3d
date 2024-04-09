@@ -45,6 +45,13 @@ load_ena_data <- function(input,output,session,file_path,rv_data,state){
     print(paste0('choices:',rv_data$ena_groupVar))
     # print(paste0(' updateSlider choices:',a))
     
+    
+    group_colors_list <- color_list[1:length(rv_data$ena_groups)]
+    groups <- rv_data$ena_groups
+    group_colors <- cbind(group_colors_list,groups)
+    colnames(group_colors) <- c('color','group')
+    rv_data$group_colors<-group_colors
+    
     output$group_colors_container <- renderUI({
       n = length(rv_data$ena_groups)
       checkboxGroupInput(session$ns("select_group"), "Choose Group:",
@@ -54,6 +61,84 @@ load_ena_data <- function(input,output,session,file_path,rv_data,state){
                          
       )
     })
+    output$network_groups_container <- renderUI({
+      groups <- rv_data$ena_groups
+      n <- length(groups)
+      
+      group_selectors<-list()
+      group_selector_info_list <- list()
+      for(i in 1:n){
+        group_color <- get_group_color(group_colors,'group',groups[i])
+        
+        
+        button_id <- paste0("group-", groups[i],'-btn')
+        points_toggle_id<-paste0("group-", groups[i],'-points-btn')
+        color_selector_id<-paste0("group-", groups[i],'-color-selector')
+        show_mean_btn_id<-paste0("group-", groups[i],'-show-mean-btn')
+        show_conf_int_btn_id<-paste0("group-", groups[i],'-show-conf-int-btn')
+        
+        group_selector_info = c(button_id=button_id,
+                                points_toggle_id=points_toggle_id,
+                                color_selector_id=color_selector_id,
+                                show_mean_btn_id=show_mean_btn_id,
+                                show_conf_int_btn_id=show_conf_int_btn_id,
+                                group_name = groups[i]
+        )
+        
+        group_selector_info_list[[length(group_selector_info_list)+ 1]] <- group_selector_info
+        
+        
+        button_id<-session$ns(button_id)
+        points_toggle_id <- session$ns(points_toggle_id)
+        color_selector_id <- session$ns(color_selector_id)
+        show_mean_btn_id <- session$ns(show_mean_btn_id)
+        show_conf_int_btn_id <- session$ns(show_conf_int_btn_id)
+        
+        group_selector <- group_selector_ui(button_id=button_id,
+                                points_toggle_id=points_toggle_id,
+                                color_selector_id=color_selector_id,
+                                show_mean_btn_id=show_mean_btn_id,
+                                show_conf_int_btn_id=show_conf_int_btn_id,
+                                group_name = groups[i],
+                                group_color=group_color)
+        #browser()
+
+        #rv_data$group_selectors[[length(rv_data$group_selectors) + 1]] <- group_selector
+        group_selectors[[length(group_selectors)+ 1]] <- group_selector
+        
+      }
+      #browser()
+      rv_data$group_selectors<-group_selector_info_list
+      #rv_data$group_selectors<-group_selectors
+      
+      # group_selectors <- lapply(1:n, function(i) {
+      #   group_color <- get_group_color(group_colors,'group',groups[i])
+      #   button_id <- session$ns(paste0("group-", groups[i],'-btn'))
+      #   points_toggle_id <- session$ns(paste0("group-", groups[i],'-points-btn'))
+      #   color_selector_id <- session$ns(paste0("group-", groups[i],'-color-selector'))
+      #   show_mean_btn_id <- session$ns(paste0("group-", groups[i],'-show-mean-btn'))
+      #   show_conf_int_btn_id <- session$ns(paste0("group-", groups[i],'-show-conf-int-btn'))
+      #   
+      #   ui <- group_selector_ui(button_id=button_id,
+      #                           points_toggle_id=points_toggle_id,
+      #                           color_selector_id=color_selector_id,
+      #                           show_mean_btn_id=show_mean_btn_id,
+      #                           show_conf_int_btn_id=show_conf_int_btn_id,
+      #                           group_name = groups[i],
+      #                           group_color=group_color)
+      #   #browser()
+      #   group_selector = c(button_id=button_id,
+      #                      points_toggle_id=points_toggle_id,
+      #                      color_selector_id=color_selector_id,
+      #                      show_mean_btn_id=show_mean_btn_id,
+      #                      show_conf_int_btn_id=show_conf_int_btn_id
+      #                      )
+      #   #rv_data$group_selectors[[length(rv_data$group_selectors) + 1]] <- group_selector
+      #   return(ui)
+      # })
+      do.call(tagList, group_selectors)
+    })
+    
     
     # shinyjs::show("overall")
     

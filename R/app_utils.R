@@ -229,5 +229,7 @@ set_default_axis_range <- function(plot){
   return(plot)
 }
 
-
+get_group_color<-function(group_colors,group_col,group_name){
+  group_colors[which(group_colors[,group_col]==group_name)]
+}
 
