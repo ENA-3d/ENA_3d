@@ -17,6 +17,7 @@ load_ena_data <- function(input,output,session,file_path,rv_data,state){
     rv_data$ena_groupVar <- get_ena_group_var(state$ena_obj)
   
     rv_data$ena_groups <- unique(state$ena_obj$points[,get(rv_data$ena_groupVar[1])])
+    rv_data$ena_groups <- as.character(rv_data$ena_groups)
     
     print(paste0('rv_data$ena_groupVar:',typeof(rv_data$ena_groupVar)))
     print(paste0('rv_data$ena_groupsL',typeof(rv_data$ena_groups)))
@@ -82,10 +83,11 @@ load_ena_data <- function(input,output,session,file_path,rv_data,state){
                                 color_selector_id=color_selector_id,
                                 show_mean_btn_id=show_mean_btn_id,
                                 show_conf_int_btn_id=show_conf_int_btn_id,
-                                group_name = groups[i]
+                                group_name = groups[i],
+                                ready=FALSE
         )
         
-        group_selector_info_list[[length(group_selector_info_list)+ 1]] <- group_selector_info
+        group_selector_info_list[[groups[i]]] <- group_selector_info
         
         
         button_id<-session$ns(button_id)
@@ -94,7 +96,8 @@ load_ena_data <- function(input,output,session,file_path,rv_data,state){
         show_mean_btn_id <- session$ns(show_mean_btn_id)
         show_conf_int_btn_id <- session$ns(show_conf_int_btn_id)
         
-        group_selector <- group_selector_ui(button_id=button_id,
+        group_selector <- group_selector_ui(
+                                button_id=button_id,
                                 points_toggle_id=points_toggle_id,
                                 color_selector_id=color_selector_id,
                                 show_mean_btn_id=show_mean_btn_id,
@@ -139,6 +142,8 @@ load_ena_data <- function(input,output,session,file_path,rv_data,state){
       do.call(tagList, group_selectors)
     })
     
+    network_select_choices = list(Option=list("No Network"),Groups=rv_data$ena_groups,Units=as.list(state$ena_obj$line.weights$ENA_UNIT))
+    updatePickerInput(session, "network_selector", choices = network_select_choices)
     
     # shinyjs::show("overall")
     

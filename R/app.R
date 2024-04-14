@@ -35,6 +35,7 @@ ENA_3D_Server <- R6Class("ENA_3D_Server",
                            render_comparison = FALSE,
                            render_overall = FALSE,
                            render_unit_group_change_plot=FALSE,
+                           render_network_plot=FALSE,
                            ena_obj=NULL,
                            color_list = color_list,
                            is_app_initialized = FALSE,
@@ -226,6 +227,9 @@ app_server <- function(input, output, session) {
   })
   ena_server_state$render_unit_group_change_plot <-reactive({
     ena_server_state$active_tab() == 'group_change'
+  })
+  ena_server_state$render_network_plot <-reactive({
+    ena_server_state$active_tab() == 'network'
   })
   
   ena_app_server(id = "main_app",state=ena_server_state,config)

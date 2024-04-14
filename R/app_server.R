@@ -12,6 +12,7 @@ source('app_module_upload_data.R')
 source('app_module_sample_data.R')
 source('app_module_stats.R')
 source('app_module_overall_model.R')
+source('app_module_network.R')
 library(shinyWidgets)
 
 ena_app_server <- function(id,state,config) {
@@ -43,7 +44,8 @@ ena_app_server <- function(id,state,config) {
                            comparison_plot=list(),
                            reactiveFunctions = list(),
                            group_colors=list(),
-                           group_selectors=list())
+                           group_selectors=list(),
+                           group_options=list())
 
 
 
@@ -196,6 +198,13 @@ ena_app_server <- function(id,state,config) {
                               scaled_nodes,
                               rv$current_camera,
       )
+      ena_network_plot_output(input, output, session,
+                              rv,
+                              state,
+                              scaled_points,
+                              scaled_nodes,
+                              rv$current_camera,
+      )
       
       
       # Hide or show the corresponding plot, depending on which tab is active
@@ -206,18 +215,30 @@ ena_app_server <- function(id,state,config) {
           shinyjs::show("ena_points_plot")
           shinyjs::hide("ena_unit_group_change_plot")
           shinyjs::hide('ena_overall_plot')
+          shinyjs::hide("ena_network_plot")
+          
         }
         if(state$render_unit_group_change_plot()){
           print('show unit group change plot')
           shinyjs::show("ena_unit_group_change_plot")
           shinyjs::hide("ena_points_plot")
           shinyjs::hide('ena_overall_plot')
+          shinyjs::hide("ena_network_plot")
+          
         }
         if(state$render_overall()){
           print('show unit group change plot')
           shinyjs::hide("ena_unit_group_change_plot")
           shinyjs::hide("ena_points_plot")
+          shinyjs::hide("ena_network_plot")
           shinyjs::show('ena_overall_plot')
+        }
+        if(state$render_network_plot()){
+          print('show unit group change plot')
+          shinyjs::hide("ena_unit_group_change_plot")
+          shinyjs::hide("ena_points_plot")
+          shinyjs::hide('ena_overall_plot')
+          shinyjs::show("ena_network_plot")
         }
       })
       

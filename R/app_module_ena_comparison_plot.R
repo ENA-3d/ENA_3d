@@ -340,5 +340,24 @@ ena_comparison_plot_output <-  function(input, output, session,
     #   }
     # })
     
+    # observeEvent({input$x
+    #   input$y
+    #   input$z
+    #   input$line_width
+    #   input$scale_factor
+    #   input$show_grid
+    #   input$show_zeroline
+    #   input$show_x_axis_arrow
+    #   input$show_y_axis_arrow
+    #   input$show_z_axis_arrow
+    #   input$group_change_show_mean
+    #   input$group_change_show_confidence_interval},
+    #   
+    #   {
+    #     if(rv_data$initialized && length(rv_data$unit_group_change_plots)>0){
+    #       rv_data$unit_group_change_plots <- make_unit_group_change_plots()
+    #       
+    #     }
+    #   })
     
 }

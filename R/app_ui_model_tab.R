@@ -95,6 +95,20 @@ model_network_ui <- function(id){
     #   search = TRUE,
     #   multiple = TRUE
     # ),
+    
+    pickerInput(
+      inputId = ns("network_selector"),
+      label = "Show Network", 
+      choices = list(
+        lower = c("a", "b", "c", "d"),
+        upper = c("A", 
+                  "B", "C", "D"))
+    ),
+    hr(),
+    
+
+    
+    
     uiOutput(ns('network_groups_container')),
   )
 }
@@ -159,7 +173,7 @@ group_selector_ui <- function(button_id,
       #column(3,switchInput(inputId = "Id018",label = "Points",size='mini')
       #       %>% tagAppendAttributes(class= 'group_show_points_button')),
       column(1,colourInput(color_selector_id,label = NULL,showColour = 'background',width='1px',value = group_color)),
-      column(7,paste0("  ",group_name)),
+      column(6,group_name),
       column(3,prettyToggle(
         inputId = points_toggle_id,
         label_on = "Points", 
@@ -191,7 +205,8 @@ group_selector_ui <- function(button_id,
                icon = icon("gear"), width = "300px",size='xs',
                tooltip = tooltipOptions(title = "Group Option")
              )
-          )
+          ),
+      hr()
     )
     
   )
