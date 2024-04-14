@@ -169,7 +169,8 @@ ena_network_plot_output <-  function(input, output, session,
                                 confidence.interval=conf,
                                 x_axis = input$x,
                                 y_axis = input$y,
-                                z_axis = input$z)
+                                z_axis = input$z,
+                                group_name=group_name)
     }
     
     return(plot)
@@ -254,7 +255,7 @@ ena_network_plot_output <-  function(input, output, session,
                                mode = "markers",
                                text=~ENA_UNIT,
                                # name = "Points",
-                               hovertemplate = "X: %{x}<br>Y: %{y}<br>Z: %{z}<br>Group : %{text}<br>",
+                               hovertemplate = "X: %{x}<br>Y: %{y}<br>Z: %{z}<br>Unit : %{text}<br>",
                                name = selected_group,
                                marker = list(
                                  size = 5,

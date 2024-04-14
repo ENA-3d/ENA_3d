@@ -131,6 +131,7 @@ ena_plot_points = function(
     y_axis='SVD2',
     z_axis='SVD3',
     group_name=NULL,
+    box_width=3,
     ...
 ) {
   ###
@@ -271,7 +272,7 @@ ena_plot_points = function(
       showlegend = show.legend,
       # legendgroup = label.group,
       # legendgroup = ifelse(!is.null(box.label), labels[1], NULL),
-      name = labels[m],
+      name = group_name,
       text = group_name,#texts[m] #labels[m],
       textfont = list(
         family = label.font.family,
@@ -309,7 +310,7 @@ ena_plot_points = function(
       x = ~X1, y = ~X2,z=~X3,
       mode = "lines",
       line = list(
-        width = 1,
+        width = box_width,
         color = colors[1],
         dash = "dash"
       ),
@@ -330,7 +331,7 @@ ena_plot_points = function(
       x = ~X1, y = ~X2,z=~X3,
       mode = "lines",
       line = list(
-        width = 1,
+        width = box_width,
         color = colors[1],
         dash = "dash"
       ),
@@ -351,7 +352,7 @@ ena_plot_points = function(
       x = ~X1, y = ~X2,z=~X3,
       mode = "lines",
       line = list(
-        width = 1,
+        width = box_width,
         color = colors[1],
         dash = "dash"
       ),
@@ -371,7 +372,7 @@ ena_plot_points = function(
       x = ~X1, y = ~X2,z=~X3,
       mode = "lines",
       line = list(
-        width = 1,
+        width = box_width,
         color = colors[1],
         dash = "dash"
       ),
